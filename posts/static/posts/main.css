@@ -101,3 +101,37 @@ select::-ms-expand {
 :-moz-placeholder { /* Firefox 18- */
   font-size: 14px;
 }
+
+#product-details{
+  text-align: left;
+  padding: 10px!important;
+  padding-top: 0!important;
+}
+
+#product-details p{
+  margin-bottom: 0!important;
+  color:#1d2129;;
+}
+
+#product-details small{
+  color:#90949c;
+}
+
+#product-details hr{
+  margin: 0px!important;
+  margin-bottom: 10px!important;
+}
+
+a:hover{
+  text-decoration: none;
+}
+
+
+#price-badge{
+  position: absolute;
+  margin-left: 10px;
+  width: 25%;
+  text-align: center;
+  top: 65%;
+  font-size: 16px;
+}

@@ -5,12 +5,14 @@
         {%  for product in products  %}
             {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
               <div class="col-xl-3">
-                  <a href="" class="link-card"><div class="card">
+                  <a href="" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ product.name }}"><div class="card">
                       <img class="img-fluid" src="http://placehold.it/245" alt=""/> 
-                      <div class="card-content">
+                      <span class="badge badge-dark" id="price-badge">{{ product.price }}</span>
+
+                      <div class="card-content" id="product-details">
                           <hr>
-                           <h3>{{ product.name }}</h3>
-                           <p>{{ product.author }}</p>
+                           <b><p>{{ product.name }}</p></b>
+                           <small>Location {{ product.created_at | timesince }}</small>
                           <br>
                       </div><!-- card content -->
                   </div></a><!-- card -->
