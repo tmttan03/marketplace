@@ -6,7 +6,7 @@
             {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
               <div class="col-xl-3">
                   <div class="card">
-                      <img src="http://placehold.it/245" alt=""/> 
+                      <img class="img-fluid" src="http://placehold.it/245" alt=""/> 
                       <div class="card-content">
                           <hr>
                            <h3>{{ product.name }}</h3>
@@ -15,7 +15,7 @@
                       </div><!-- card content -->
                   </div><!-- card -->
               </div><!-- col-md-4 -->
-        {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><!-- row closing --><hr>{%  endif %}
+        {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><!-- row closing -->{%  endif %}
         {%  endfor %}
 </div><!-- container -->
 
