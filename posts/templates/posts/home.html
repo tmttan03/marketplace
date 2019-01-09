@@ -1,0 +1,22 @@
+{% extends "posts/base.html" %}
+{% block content %}
+
+ <div class="container">
+        {%  for product in products  %}
+            {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
+              <div class="col-xl-3">
+                  <div class="card">
+                      <img src="http://placehold.it/245" alt=""/> 
+                      <div class="card-content">
+                          <hr>
+                           <h3>{{ product.name }}</h3>
+                           <p>{{ product.author }}</p>
+                          <br>
+                      </div><!-- card content -->
+                  </div><!-- card -->
+              </div><!-- col-md-4 -->
+        {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><!-- row closing --><hr>{%  endif %}
+        {%  endfor %}
+</div><!-- container -->
+
+{% endblock content %}
