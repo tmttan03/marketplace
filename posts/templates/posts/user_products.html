@@ -1,0 +1,28 @@
+{% extends "posts/base.html" %}
+{% block content %}
+    {% for product in products %}
+    <div class="card" style="padding: 10px">
+      <div class="media">
+        <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
+        <div class="media-body">
+          <b><p class="mt-0"> <span style="color: #71a830;">{{ product.price }}</span> - {{ product.name }}  <small>{{ product.created_at | timesince  }} </small> </p></b>
+          <p>{{ product.description }}</p>
+          <button type="button" class="btn btn-secondary btn-fb btn-sm">Mark as Sold</button>
+          <button type="button" class="btn btn-secondary btn-sm">Mark as Pending</button>
+
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Manage
+            </button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item btn-sm" type="button"><span class="fas fa-times"></span> Delete</button>
+              <button class="dropdown-item btn-sm" type="button"><span class="fas fa-pen"></span> Edit</button>
+              
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><br>
+    {% endfor %}
+{% endblock content %}
