@@ -13,7 +13,7 @@ class PostListView(TemplateView):
 
     def get_context_data(self, **kwargs):
          context = super(PostListView, self).get_context_data(**kwargs)
-         context['products'] = Product.objects.all()
+         context['products'] = Product.objects.filter(status="1")
          context['categories'] = Category.objects.all()
          return context
   
@@ -26,17 +26,23 @@ class UserProductsListView(ListView):
 		user = get_object_or_404(User, username=self.kwargs.get('username'))
 		return Product.objects.filter(author=user).order_by('-created_at')
 
-@login_required
-def create_post(request):
-	if request.method == 'POST':
-		form = PostForm(request.POST)
-		if form.is_valid():
-			product = form.save(commit=False)
-			product.author = request.user
-			product.save()
-			messages.success(request, f'New Product')
-			return redirect('post-home')
-	else:
-		form = PostForm()
-	return render(request,'posts/base.html',{'form': form})
 
+class PostView(TemplateView):
+    template_name = 'posts/includes/create-post-modal.html'
+    form = PostForm
+
+    def get_context_data(self, **kwargs):
+         context = super(PostView, self).get_context_data(**kwargs)
+         context['form'] = self.form()
+         return context
+
+    def post(self,*args,**kwargs):
+    	print("post")
+    	form = self.form(self.request.POST)
+    	if form.is_valid():
+    		product = form.save(commit=False)
+    		product.author = self.request.user
+    		product.save()
+    		messages.success(self.request, f'New Product')
+    		return redirect('post-home')
+    	return render(self.request, self.template_name,{'form': form})

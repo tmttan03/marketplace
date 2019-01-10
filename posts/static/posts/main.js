@@ -1,18 +1,28 @@
-/*function genericLoadDialog(form_selector, dialog_selector, matchString){
-        $.ajax({
-            url: $(form_selector).attr('action'),
-            type: 'POST',
-            data:  $(form_selector).serialize(),
-            success: function(data, textStatus, jqXHR){
-                if(data.match(matchString)){
-                // We got errors in form
-                    $(dialog_selector).html(data).modal('show');
-                            return false;
-                }
-                        $(dialog_selector).modal('hide');
-            },
-        })
-    }*/
+$('#new_post_modal').on('show.bs.modal', function (e) {
+   var url = $(this).data("url");
+   $.ajax({
+        url: url,
+        method: "GET",
+        success: function(response){
+            $('#new-post').html(response);
+        }
+   })
+});
+
+$(document).on('submit', '#post-create', function (e){
+    var url = $(this).attr("action");
+    e.preventDefault();
+     $.ajax({
+        url: url,
+        method: "POST",
+        data:  $(this).serialize(),
+        success: function(response){
+            $('#new-post').html(response);
+        }
+   })
+});
+
+
 
 
 
