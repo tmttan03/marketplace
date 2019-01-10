@@ -1,6 +1,9 @@
 {% extends "posts/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+{% if user.is_authenticated %}
+    <meta http-equiv="refresh" content="0; URL='{% url 'post-home' %}'" />
+{% else %}
     <div class="content-section">
         <form method="POST">
             {% csrf_token %}
@@ -18,4 +21,5 @@
             </small>
         </div>
     </div>
+ {% endif %}
 {% endblock content %}
