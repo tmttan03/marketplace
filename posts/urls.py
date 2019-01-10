@@ -5,4 +5,5 @@ from . import views
 urlpatterns = [
     path('', PostListView.as_view(), name='post-home'),
     path('selling/<str:username>', UserProductsListView.as_view(), name='user-products'),
+    path('new/', views.create_post, name="create_post"),
 ]
