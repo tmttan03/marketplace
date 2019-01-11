@@ -15,7 +15,9 @@
             Manage
             </button>
             <div class="dropdown-menu">
-              <button class="dropdown-item btn-sm" type="button"><span class="fas fa-times"></span> Delete</button>
+
+              <a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href="{% url 'delete-post' product.id %}"><span class="fas fa-times"></span> Delete</a>
+
               <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' product.id %}"><span class="fas fa-pen"></span> Edit</a>
             </div>
           </div>
@@ -27,5 +29,8 @@
 
 <!--Update Modal-->
 {% include "posts/includes/update-post-modal-template.html" %}
+
+<!--Warning Delete Modal-->
+{% include "posts/includes/delete-modal.html" %}
 
 {% endblock content %}

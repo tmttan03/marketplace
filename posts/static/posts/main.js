@@ -63,17 +63,13 @@ $(document).on('submit', '#UpdateForm', function (e){
 });
 });
 
-
 $('#update_post_modal').on('hide.bs.modal', function (e) {
     location.reload();
-})
-
-
+});
 
 /*Detail Modal*/
 $("a[id='detail-card']").click(function() {
   var link = $(this).attr('href');
-
   $('#detailModal').on('show.bs.modal', function (e) {
     //var link = $("#detail-card").attr('href');
     console.log(link);
@@ -87,6 +83,47 @@ $("a[id='detail-card']").click(function() {
           }
      })
   });
+});
+
+
+/*Delete Modal*/
+$("a[id='delete-btn']").click(function() {
+  var link = $(this).attr('href');
+  $('#deleteModal').on('show.bs.modal', function (e) {
+    //var link = $("#detail-card").attr('href');
+    console.log(link);
+    $.ajax({
+          url: link,
+          method: "GET",
+          success: function(response){
+            //console.log(response);
+            $('#deleteModal').attr('data-url', link);
+            $('#warning-content-form').html(response);
+          }
+     })
+  });
+});
+
+
+$("a[id='delete-btn']").click(function() {
+    var url = $(this).attr('href');
+  $(document).on('submit', '#DeleteForm', function (e){
+      //var url = $(this).attr("action");
+      console.log(url);
+      e.preventDefault();
+       $.ajax({
+          url: url,
+          method: "POST",
+          success: function(response){
+              console.log(response)
+              $('#warning-content-for').html(response);
+          }
+     })
+  });
+});
+
+$('#DeleteForm').on('hide.bs.modal', function (e) {
+    location.reload();
 });
 
 

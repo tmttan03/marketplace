@@ -22,3 +22,5 @@ class UpdatePostForm(forms.ModelForm):
 	class Meta:
 		model = Product
 		fields = ['name','price','category','description'] 
+
+

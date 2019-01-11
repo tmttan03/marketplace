@@ -62,7 +62,8 @@ class UpdateView(DetailView):
             form.save()
             messages.success(self.request, f'Item Updated')
             return redirect('message')
-        return render(self.request, self.template_name, {'form': form})        
+        return render(self.request, self.template_name, {'form': form}) 
+
 
 class DetailView(DetailView):
     model = Product
@@ -76,4 +77,22 @@ class MessageView(TemplateView):
          context['products'] = Product.objects.filter(status="1")
          context['categories'] = Category.objects.all()
          return context
+
+class DeleteView(DetailView):
+    model = Product
+    template_name = 'posts/includes/warning-del-modal.html'
+
+    def post(self,*args,**kwargs):
+        prod_id = Product.objects.get(pk=self.kwargs['pk'])
+        products = Product.objects.filter(id='1')
+        for product in products:
+            product.status = '0'
+            product.save()
+        return redirect('post-home')
+
+def my_view(request,pk):
+    # View code here...
+    t = loader.get_template('myapp/index.html')
+    c = {'foo': 'bar'}
+    return HttpResponse(t.render(c, request), content_type='application/xhtml+xml')
 
