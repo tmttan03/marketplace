@@ -38,11 +38,11 @@ class PostView(TemplateView):
     def post(self,*args,**kwargs):
     	form = self.form(self.request.POST)
     	if form.is_valid():
-    		product = form.save(commit=False)
-    		product.author = self.request.user
-    		product.save()
-    		messages.success(self.request, f'Successfully added a new product!')
-    		return redirect('post-home')
+            product = form.save(commit=False)
+            product.author = self.request.user
+            product.save()
+            messages.success(self.request, f'Successfully Added a New Item')
+            return redirect('message') 
     	return render(self.request, self.template_name,{'form': form})
 
 
@@ -60,13 +60,20 @@ class UpdateView(DetailView):
         form = UpdatePostForm(self.request.POST, instance=Product.objects.get(pk=self.kwargs['pk']))
         if form.is_valid():
             form.save()
-            messages.success(self.request, f'Product Updated')
-            return redirect('post-home')
+            messages.success(self.request, f'Item Updated')
+            return redirect('message')
         return render(self.request, self.template_name, {'form': form})        
 
 class DetailView(DetailView):
     model = Product
     template_name = 'posts/includes/create-post-modal-body.html'
 
+class MessageView(TemplateView):
+    template_name = 'posts/messages.html'
 
+    def get_context_data(self, **kwargs):
+         context = super(MessageView, self).get_context_data(**kwargs)
+         context['products'] = Product.objects.filter(status="1")
+         context['categories'] = Category.objects.all()
+         return context
 

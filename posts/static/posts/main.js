@@ -24,14 +24,16 @@ $(document).on('submit', '#post-create-form', function (e){
    })
 });
 
+$('#new_post_modal').on('hide.bs.modal', function (e) {
+    location.reload();
+})
+
 
 /* Update Post */
 $("a[id='edit-btn']").click(function() {
   var link = $(this).attr('href');
-/*Detail Modal*/
   $('#update_post_modal').on('show.bs.modal', function (e) {
     //var link = $("#detail-card").attr('href');
-    console.log(link);
     $.ajax({
           url: link,
           method: "GET",
@@ -54,6 +56,7 @@ $(document).on('submit', '#UpdateForm', function (e){
         method: "POST",
         data:  $(this).serialize(),
         success: function(response){
+            console.log(response)
             $('#update-post').html(response);
         }
    })
@@ -61,11 +64,16 @@ $(document).on('submit', '#UpdateForm', function (e){
 });
 
 
+$('#update_post_modal').on('hide.bs.modal', function (e) {
+    location.reload();
+})
 
 
+
+/*Detail Modal*/
 $("a[id='detail-card']").click(function() {
   var link = $(this).attr('href');
-/*Detail Modal*/
+
   $('#detailModal').on('show.bs.modal', function (e) {
     //var link = $("#detail-card").attr('href');
     console.log(link);
