@@ -16,8 +16,7 @@
             </button>
             <div class="dropdown-menu">
               <button class="dropdown-item btn-sm" type="button"><span class="fas fa-times"></span> Delete</button>
-              <button class="dropdown-item btn-sm" type="button"><span class="fas fa-pen"></span> Edit</button>
-              
+              <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' product.id %}"><span class="fas fa-pen"></span> Edit</a>
             </div>
           </div>
 
@@ -25,4 +24,8 @@
       </div>
     </div><br>
     {% endfor %}
+
+<!--Update Modal-->
+{% include "posts/includes/update-post-modal-template.html" %}
+
 {% endblock content %}

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from .forms import PostForm
+from .forms import PostForm, UpdatePostForm
 from .models import Product , Category
 
 
@@ -44,6 +44,25 @@ class PostView(TemplateView):
     		messages.success(self.request, f'Successfully added a new product!')
     		return redirect('post-home')
     	return render(self.request, self.template_name,{'form': form})
+
+
+class UpdateView(DetailView):
+    model = Product
+    template_name = 'posts/includes/update-post-modal.html'
+    form = UpdatePostForm
+
+    def get_context_data(self, **kwargs):
+         context = super(UpdateView, self).get_context_data(**kwargs)
+         context['form'] = UpdatePostForm(instance=Product.objects.get(pk=self.kwargs['pk']))
+         return context
+
+    def post(self,*args,**kwargs):
+        form = UpdatePostForm(self.request.POST, instance=Product.objects.get(pk=self.kwargs['pk']))
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, f'Product Updated')
+            return redirect('post-home')
+        return render(self.request, self.template_name, {'form': form})        
 
 class DetailView(DetailView):
     model = Product
