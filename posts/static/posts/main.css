@@ -148,3 +148,9 @@ a:hover{
 :-moz-placeholder { /* Firefox 18- */
   font-size: 14px;
 }
+
+.list-group-item-light {
+    color: #343a40!important; 
+    background-color: #e9ebee!important;
+}
+
