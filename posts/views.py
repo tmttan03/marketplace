@@ -45,5 +45,9 @@ class PostView(TemplateView):
     		return redirect('post-home')
     	return render(self.request, self.template_name,{'form': form})
 
+class DetailView(DetailView):
+    model = Product
+    template_name = 'posts/includes/create-post-modal-body.html'
+
 
 
