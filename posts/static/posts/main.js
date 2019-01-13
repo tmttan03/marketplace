@@ -90,7 +90,10 @@ $("a[id='detail-card']").click(function() {
 $("a[id='delete-btn']").click(function() {
   var link = $(this).attr('href');
   $('#deleteModal').on('show.bs.modal', function (e) {
+  
     //var link = $("#detail-card").attr('href');
+    //console.log(link);
+
     console.log(link);
     $.ajax({
           url: link,
@@ -98,31 +101,34 @@ $("a[id='delete-btn']").click(function() {
           success: function(response){
             //console.log(response);
             $('#deleteModal').attr('data-url', link);
-            $('#warning-content-form').html(response);
+            $('#warning-body').html(response);
           }
      })
   });
 });
 
 
+//var csrftoken = Cookies.get('csrftoken');
 $("a[id='delete-btn']").click(function() {
     var url = $(this).attr('href');
-  $(document).on('submit', '#DeleteForm', function (e){
+  $(document).on('submit', '#inactive-form', function (e){
       //var url = $(this).attr("action");
       console.log(url);
-      e.preventDefault();
+     // e.preventDefault();
        $.ajax({
           url: url,
           method: "POST",
+          //headers:{"HTTP_X_CSRF_TOKEN":csrftoken},
           success: function(response){
               console.log(response)
-              $('#warning-content-for').html(response);
+              $('#warning-body').html(response);
           }
      })
   });
 });
 
-$('#DeleteForm').on('hide.bs.modal', function (e) {
+
+$('#inactive-form').on('hide.bs.modal', function (e) {
     location.reload();
 });
 
