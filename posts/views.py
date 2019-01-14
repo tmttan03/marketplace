@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.views.generic import TemplateView , DetailView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+
+
 
 from .forms import PostForm, UpdatePostForm
 from .models import Product , Category
@@ -17,7 +19,7 @@ class PostListView(TemplateView):
          context['categories'] = Category.objects.all()
          return context
   
-class UserProductsListView(ListView):
+class UserProductsListView(LoginRequiredMixin, ListView):
 	model = Product
 	template_name = 'posts/user_products.html'
 	context_object_name = 'products'
@@ -26,7 +28,7 @@ class UserProductsListView(ListView):
 		user = get_object_or_404(User, username=self.kwargs.get('username'))
 		return Product.objects.filter(author=user,status="1").order_by('-created_at')
 
-class PostView(TemplateView):
+class PostView(LoginRequiredMixin, TemplateView):
     template_name = 'posts/includes/create-post-modal.html'
     form = PostForm
 
@@ -46,7 +48,7 @@ class PostView(TemplateView):
     	return render(self.request, self.template_name,{'form': form})
 
 
-class UpdateView(DetailView):
+class UpdateView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'posts/includes/update-post-modal.html'
     form = UpdatePostForm
@@ -78,13 +80,18 @@ class MessageView(TemplateView):
          context['categories'] = Category.objects.all()
          return context
 
-class DeleteView(DetailView):
+class DeleteView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'posts/includes/warning-del-modal.html'
 
     def post(self,*args,**kwargs):
-        form = Product.objects.filter(pk=self.kwargs['pk']).update(status='Inactive')
-        messages.success(self.request, f'Item Deleted')
-        return redirect('user-products', self.request.user.username)
+        author = get_object_or_404(Product, pk=self.kwargs['pk'])
+        if self.request.user == author:
+            form = Product.objects.filter(pk=self.kwargs['pk']).update(status='Inactive')
+            messages.success(self.request, f'Item Deleted')
+            return redirect('user-products', self.request.user.username)
+        else:
+            messages.warning(self.request, f'Not Applicable')
+            return redirect('post-home')
         #return render(self.request, self.template_name, {'form': form}) 
 
