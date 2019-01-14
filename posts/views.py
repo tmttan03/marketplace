@@ -24,7 +24,7 @@ class UserProductsListView(ListView):
 
 	def get_queryset(self):
 		user = get_object_or_404(User, username=self.kwargs.get('username'))
-		return Product.objects.filter(author=user).order_by('-created_at')
+		return Product.objects.filter(author=user,status="1").order_by('-created_at')
 
 class PostView(TemplateView):
     template_name = 'posts/includes/create-post-modal.html'
@@ -83,16 +83,8 @@ class DeleteView(DetailView):
     template_name = 'posts/includes/warning-del-modal.html'
 
     def post(self,*args,**kwargs):
-        prod_id = Product.objects.get(pk=self.kwargs['pk'])
-        products = Product.objects.filter(id='1')
-        for product in products:
-            product.status = '0'
-            product.save()
-        return redirect('post-home')
-
-def my_view(request,pk):
-    # View code here...
-    t = loader.get_template('myapp/index.html')
-    c = {'foo': 'bar'}
-    return HttpResponse(t.render(c, request), content_type='application/xhtml+xml')
+        form = Product.objects.filter(pk=self.kwargs['pk']).update(status='Inactive')
+        messages.success(self.request, f'Item Deleted')
+        return redirect('user-products', self.request.user.username)
+        #return render(self.request, self.template_name, {'form': form}) 
 

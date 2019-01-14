@@ -154,3 +154,12 @@ a:hover{
     background-color: #e9ebee!important;
 }
 
+/* Detail modal */
+
+#detail-body.modal-body{
+  padding: 0;
+}
+
+#detail-body div.container{
+  padding: 0;
+}
