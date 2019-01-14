@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Category
+from .models import Product, Category, ProductImgs
 from django.contrib.auth.models import User
 
 class PostForm(forms.ModelForm):
@@ -25,3 +25,9 @@ class UpdatePostForm(forms.ModelForm):
 		fields = ['name','price','category','description'] 
 
 
+class ImageFieldForm(forms.Form):
+    img_field = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label='')
+
+    class Meta:
+    	model = ProductImgs
+    	fields = ['img_field'] 

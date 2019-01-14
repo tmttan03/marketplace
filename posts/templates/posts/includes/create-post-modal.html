@@ -4,7 +4,10 @@
     {% csrf_token %}
     <fieldset class="form-group">
         {{ form|crispy }}
+        {{ i_form |crispy }}
     </fieldset>
+
+
     <div class="form-group">
         <button id="btn-create" class="btn btn-fb btn-sm" type="submit">Submit</button>
     </div>

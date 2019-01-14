@@ -1,12 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
-from django.views.generic import TemplateView , DetailView, ListView
+from django.views.generic import TemplateView , DetailView, ListView,View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-
-
-from .forms import PostForm, UpdatePostForm
+from .forms import PostForm, UpdatePostForm, ImageFieldForm
 from .models import Product , Category
 
 
@@ -19,36 +17,46 @@ class PostListView(TemplateView):
          context['categories'] = Category.objects.all()
          return context
   
-class UserProductsListView(LoginRequiredMixin, ListView):
-	model = Product
-	template_name = 'posts/user_products.html'
-	context_object_name = 'products'
+class UserProductsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = Product
+    template_name = 'posts/user_products.html'
+    context_object_name = 'products'
 
-	def get_queryset(self):
-		user = get_object_or_404(User, username=self.kwargs.get('username'))
-		return Product.objects.filter(author=user,status="1").order_by('-created_at')
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Product.objects.filter(author=user,status="1").order_by('-created_at')
+
+    def test_func(self):
+        post = Product.objects.get(author=self.kwargs.get('username'))
+        if self.request.user == post.author:
+            return True
+        return False   
+
 
 class PostView(LoginRequiredMixin, TemplateView):
     template_name = 'posts/includes/create-post-modal.html'
     form = PostForm
+    i_form = ImageFieldForm
 
     def get_context_data(self, **kwargs):
          context = super(PostView, self).get_context_data(**kwargs)
          context['form'] = self.form()
+         context['i_form'] = self.i_form()
          return context
 
     def post(self,*args,**kwargs):
     	form = self.form(self.request.POST)
-    	if form.is_valid():
+    	if form.is_valid() and i_form.is_valid(): 
             product = form.save(commit=False)
             product.author = self.request.user
             product.save()
+            i_form.save()
             messages.success(self.request, f'Successfully Added a New Item')
-            return redirect('message') 
-    	return render(self.request, self.template_name,{'form': form})
+            return redirect('message')        
+    	return render(self.request, self.template_name,{'form': form, 'i_form':i_form})
 
 
-class UpdateView(LoginRequiredMixin, DetailView):
+class UpdateView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Product
     template_name = 'posts/includes/update-post-modal.html'
     form = UpdatePostForm
@@ -66,6 +74,12 @@ class UpdateView(LoginRequiredMixin, DetailView):
             return redirect('message')
         return render(self.request, self.template_name, {'form': form}) 
 
+    def test_func(self):
+        post = Product.objects.get(pk=self.kwargs['pk'])
+        if self.request.user == post.author:
+            return True
+        return False    
+
 
 class DetailView(DetailView):
     model = Product
@@ -80,18 +94,17 @@ class MessageView(TemplateView):
          context['categories'] = Category.objects.all()
          return context
 
-class DeleteView(LoginRequiredMixin, DetailView):
+class DeleteView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Product
     template_name = 'posts/includes/warning-del-modal.html'
 
     def post(self,*args,**kwargs):
-        author = get_object_or_404(Product, pk=self.kwargs['pk'])
-        if self.request.user == author:
-            form = Product.objects.filter(pk=self.kwargs['pk']).update(status='Inactive')
-            messages.success(self.request, f'Item Deleted')
-            return redirect('user-products', self.request.user.username)
-        else:
-            messages.warning(self.request, f'Not Applicable')
-            return redirect('post-home')
-        #return render(self.request, self.template_name, {'form': form}) 
-
+        form = Product.objects.filter(pk=self.kwargs['pk']).update(status='Inactive')
+        messages.success(self.request, f'Item Deleted')
+        return redirect('user-products', self.request.user.username)
+       
+    def test_func(self):
+        post = Product.objects.get(pk=self.kwargs['pk'])
+        if self.request.user == post.author:
+            return True
+        return False   

@@ -1,6 +1,6 @@
 {% extends "posts/base.html" %}
 {% block content %}
-    {% for product in products %}
+  {% for product in products %}
     <div class="card" style="padding: 10px">
       <div class="media">
         <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
@@ -25,7 +25,7 @@
         </div>
       </div>
     </div><br>
-    {% endfor %}
+  {% endfor %}
 
 <!--Update Modal-->
 {% include "posts/includes/update-post-modal-template.html" %}
