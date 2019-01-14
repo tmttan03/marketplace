@@ -90,8 +90,13 @@ $("a[id='detail-card']").click(function() {
 $("a[id='delete-btn']").click(function() {
   var link = $(this).attr('href');
   $('#deleteModal').on('show.bs.modal', function (e) {
+  
     //var link = $("#detail-card").attr('href');
     //console.log(link);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 22f9b05e96cacbe34703548a43c95123a0b5df75
     console.log(link);
     $.ajax({
           url: link,
