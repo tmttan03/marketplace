@@ -11,7 +11,7 @@
 
                   <div class="card-content" id="product-details">
                       <hr>
-                       <b><p>{{ product.name }}</p></b>
+                       <b><p>{{ product.name }} </p></b>
                        <small>Location {{ product.created_at | timesince }}</small>
                       <br>
                   </div><!-- card content -->
@@ -28,6 +28,8 @@
         </div></center>
     {%  endfor %}
 </div><!-- container -->
+
+    
 
 <!--Detail Modal-->
 {% include "posts/includes/post-detail-modal.html" %}

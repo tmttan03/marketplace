@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 
 from .forms import PostForm, UpdatePostForm, ImageFieldForm
-from .models import Product , Category
+from .models import Product , Category, ProductAlbum
 
 
 class PostListView(TemplateView):
@@ -15,6 +15,7 @@ class PostListView(TemplateView):
          context = super(PostListView, self).get_context_data(**kwargs)
          context['products'] = Product.objects.filter(status="1")
          context['categories'] = Category.objects.all()
+         context['productalbum'] = ProductAlbum.objects.all()
          return context
   
 class UserProductsListView(LoginRequiredMixin, ListView):
