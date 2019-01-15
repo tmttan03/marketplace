@@ -29,6 +29,13 @@
   {% else %}
       <meta http-equiv="refresh" content="0; url='{% url 'user-products' request.user.id %}'" />
   {% endif %}
+  {% empty %}
+        <center><div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <h1 class="display-4">No Products Yet</h1>
+            <p class="lead">Start by Creating Your First Product. </p>
+          </div>
+        </div></center>
   {% endfor %}
 
 

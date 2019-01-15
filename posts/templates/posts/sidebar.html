@@ -2,7 +2,7 @@
 <ul class="list-group" id='myList'>
 	<a id="browse-btn" href="{% url 'post-home' %}"><li class="list-group-item list-group-item-light">Browse</li></a>
 	<li class="list-group-item list-group-item-light">Buying</li>
-	<a id="selling-btn" href="{% url 'user-products' request.user.id %}"><li class="list-group-item list-group-item-light">Selling</li></a>
+	<a id="selling-btn" href="{% url 'user-products' request.user.id %}"><li id="selling-li" class="list-group-item list-group-item-light">Selling</li></a>
 	<li class="list-group-item list-group-item-light "><button class="btn btn-primary btn-sm btn-block btn-fb" data-toggle="modal" data-target="#new_post_modal" style="color: white" ><span class="fas fa-plus"></span> Sell Something</button></li>
 </ul>
 

@@ -160,8 +160,30 @@ a:hover{
   padding: 0;
 }
 
-#detail-body div.container{
-  padding: 0;
+.breadcrumb{
+  background-color: #ffffff!important;
+  margin-bottom: 5px;
+}
+
+.breadcrumb-item{
+  color: #8d949e;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.breadcrumb-item a{
+  color: #8d949e;
+}
+
+#header-modal ol{
+  padding: 10px 0 10px 10px;
+}
+
+.detail-account-img {
+  height: 60px;
+  width: 60px;
+  margin-right: 20px;
+  margin-bottom: 16px;
 }
 
 /* Upload */

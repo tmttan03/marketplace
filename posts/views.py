@@ -95,7 +95,7 @@ class DeleteView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def post(self,*args,**kwargs):
         form = Product.objects.filter(pk=self.kwargs['pk']).update(status='Inactive')
         messages.success(self.request, f'Item Deleted')
-        return redirect('user-products', self.request.user.username)
+        return redirect('user-products', self.request.user.id)
        
     def test_func(self):
         post = Product.objects.get(pk=self.kwargs['pk'])

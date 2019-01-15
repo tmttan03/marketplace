@@ -1,10 +1,9 @@
 <div id="content">
 	<div class="modal-body" id="detail-body">
-		 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		    <span aria-hidden="true">&times;</span>
-		 </button>
+		 
 	 	 <div class="container">
 		  	<div class="row">
+		  		 
 			    <div class="col-md-6" style="padding-left: 0px; padding-right: 0px;">
 			      	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 						<ol class="carousel-indicators">
@@ -34,32 +33,45 @@
 					</div>
 			    </div>
 			    <div class="col-md-6" style="padding-right: 0px; padding-left: 0px;">
-			      	<nav aria-label="breadcrumb">
+			    	<div style="float: right;">
+			    		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true" style="margin-top: 30px;padding-right: 5px;">&times;</span>
+						</button>	
+			    	</div>
+			      	<nav aria-label="breadcrumb" id="header-modal">
 					  <ol class="breadcrumb">
-					    <li class="breadcrumb-item"><a href="#">Marketplace</a></li>
+					    <li class="breadcrumb-item"><a href="{% url 'post-home' %}">Marketplace</a></li>
 					    <li class="breadcrumb-item active" aria-current="page">{{ product.category }}</li>
 					  </ol>
+
 					</nav>
-					<h6 style="text-transform: uppercase;">{{ product.name }}</h6>
-					<small>Location {{ product.created_at | timesince }}</small>
-					<hr>
-					<p>{{ product.description }}</p>
+					<div class="container" style="padding-left: 10px;">
+						<h6 style="text-transform: uppercase;font-size: 14px;line-height: 18px;margin-bottom: 0px; font-weight: bold;">{{ product.name }}</h6>
+						<small>Location {{ product.created_at | timesince }}</small>
+						<hr style="margin-bottom: 10px;margin-top: 5px;">
+						<p>{{ product.description }}</p><br>
+						<!-- Maps -->
+						<h6 style="text-transform: uppercase;font-size: 14px;line-height: 18px;margin-bottom: 0px;font-weight: bold;">Seller information</h6><br>
+						<div class="media">
+						    <img class="rounded-circle detail-account-img" src="{{ product.author.profile.image.url }}">
+						    <div class="media-body">
+						       <p class="account-heading" >{{ product.author.username }}</p>
+						    </div>
+						</div>
+						<hr style="margin-bottom: 10px;margin-top: 5px;">
+						<small>Report this listing if you think it discriminates against people</small><br><br>
+						<button class="btn btn-primary btn-sm btn-block btn-fb" style="color: white" ><span class="fas cart-plus"></span> Add to Cart</button>
+					</div>
+				</div>
+			</div>
+					
+					
+					
+					
 
-					<!-- Maps -->
-					<h6 style="text-transform: uppercase;">Seller information</h6>
-					 <div class="media">
-					 <!-- jquery if src is empty then set default.jpg as prof pic -->
-				        <img class="rounded-circle account-img" src="{{ product.author.image.url }}">
-				        <div class="media-body">
-				          <h2 class="account-heading">{{ product.author.username }}</h2>
-				        </div>
-				      </div>
-				      <hr>
-
-				      <small>Report this listing if you think it discriminates against people</small>
-
-			    </div>
-		  	</div>
+					
+					
+					
 		</div>
 	</div>
 

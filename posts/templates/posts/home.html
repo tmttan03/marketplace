@@ -1,25 +1,32 @@
 {% extends "posts/base.html" %}
 {% block content %}
  <div class="container">
-        {%  for product in products  %}
-            {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
-              <div class="col-xl-3">
-                  <a href="{% url 'view-post' product.id %}" id="detail-card" data-toggle="modal" data-target="#detailModal" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ product.name }}"> 
-                    <div class="card">
-                      <img class="img-fluid" src="http://placehold.it/245" alt=""/> 
-                      <span class="badge badge-dark" id="price-badge">{{ product.price }}</span>
+    {%  for product in products  %}
+        {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
+          <div class="col-xl-3">
+              <a href="{% url 'view-post' product.id %}" id="detail-card" data-toggle="modal" data-target="#detailModal" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ product.name }}"> 
+                <div class="card">
+                  <img class="img-fluid" src="http://placehold.it/245" alt=""/> 
+                  <span class="badge badge-dark" id="price-badge">{{ product.price }}</span>
 
-                      <div class="card-content" id="product-details">
-                          <hr>
-                           <b><p>{{ product.name }}</p></b>
-                           <small>Location {{ product.created_at | timesince }}</small>
-                          <br>
-                      </div><!-- card content -->
-                  </div><!-- card -->
-                </a><!-- link -->
-              </div><!-- col-xl-4 -->
-        {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><br><!-- row closing -->{%  endif %}
-        {%  endfor %}
+                  <div class="card-content" id="product-details">
+                      <hr>
+                       <b><p>{{ product.name }}</p></b>
+                       <small>Location {{ product.created_at | timesince }}</small>
+                      <br>
+                  </div><!-- card content -->
+              </div><!-- card -->
+            </a><!-- link -->
+          </div><!-- col-xl-4 -->
+    {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><br><!-- row closing -->{%  endif %}
+    {% empty %}
+        <center><div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <h1 class="display-4">No Products Yet</h1>
+            <p class="lead">Start by Creating Your First Product. </p>
+          </div>
+        </div></center>
+    {%  endfor %}
 </div><!-- container -->
 
 <!--Detail Modal-->
