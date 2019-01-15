@@ -17,20 +17,14 @@ class PostListView(TemplateView):
          context['categories'] = Category.objects.all()
          return context
   
-class UserProductsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+class UserProductsListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'posts/user_products.html'
     context_object_name = 'products'
 
     def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        user = get_object_or_404(User, pk=self.kwargs.get('pk'))
         return Product.objects.filter(author=user,status="1").order_by('-created_at')
-
-    def test_func(self):
-        post = Product.objects.get(author=self.kwargs.get('username'))
-        if self.request.user == post.author:
-            return True
-        return False   
 
 
 class PostView(LoginRequiredMixin, TemplateView):
