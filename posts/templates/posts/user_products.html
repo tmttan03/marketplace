@@ -4,10 +4,16 @@
   {% if user == product.author %}
     <div class="card" style="padding: 10px">
       <div class="media">
-        <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
+        {% for photo in product.productalbum_set.all %} 
+          {% if forloop.counter == 1 %} 
+            <img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/> &nbsp;&nbsp;&nbsp;
+          {% endif %}
+        {% empty %} 
+          <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
+        {% endfor %}   
         <div class="media-body">
-          <b><p class="mt-0"> <span style="color: #71a830;">{{ product.price }}</span> - {{ product.name }}  <small>{{ product.created_at | timesince  }} </small> </p></b>
-          <p>{{ product.description }}</p>
+          <b><p class="mt-0" style="margin-bottom: 5px"> <span style="color: #71a830;">{{ product.price }}</span> - {{ product.name }}  <small>{{ product.created_at | timesince  }} </small> </p></b>
+          <p style="font-size: 13px">{{ product.description }}</p>
           <button type="button" class="btn btn-secondary btn-fb btn-sm">Mark as Sold</button>
           <button type="button" class="btn btn-secondary btn-sm">Mark as Pending</button>
 

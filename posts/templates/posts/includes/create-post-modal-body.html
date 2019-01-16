@@ -7,29 +7,37 @@
 			    <div class="col-md-6" style="padding-left: 0px; padding-right: 0px;">
 			      	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 						<ol class="carousel-indicators">
-					    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-					    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-					    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-					  </ol>
+						{% for photo in product.productalbum_set.all %}	
+						    <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}" class="{% if forloop.counter == 1 %} active {% endif %}"></li>
+						{% empty %}
+						{% endfor %}
+					  	</ol>
 					  <div class="carousel-inner">
-					    <div class="carousel-item active">
-					      <img class="d-block w-100" src="http://placehold.it/500" alt="First slide">
-					    </div>
-					    <div class="carousel-item">
-					      <img class="d-block w-100" src="http://placehold.it/500" alt="Second slide">
-					    </div>
-					    <div class="carousel-item">
-					      <img class="d-block w-100" src="http://placehold.it/500" alt="Third slide">
-					    </div>
+					  	{% for photo in product.productalbum_set.all %}	
+						    <div class="carousel-item {% if forloop.counter == 1 %} active {% endif %}" id="slide{{ forloop.counter }}">
+						      <img class="d-block w-100" src="{{ photo.image.url }}">
+						    </div>
+						{% empty %}
+							<div class="carousel-item active">
+						      <img class="d-block w-100" src="http://placehold.it/500" alt="First slide">
+						    </div>
+					    {% endfor %}
 					  </div>
-					  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-					    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-					    <span class="sr-only">Previous</span>
-					  </a>
-					  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-					    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-					    <span class="sr-only">Next</span>
-					  </a>
+
+					  {% for photo in product.productalbum_set.all %}	
+						  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+						    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						    <span class="sr-only">Previous</span>
+						  </a>
+						  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+						    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+						    <span class="sr-only">Next</span>
+						  </a>
+					  {% empty %}
+					  
+					  {% endfor %}
+
+
 					</div>
 			    </div>
 			    <div class="col-md-6" style="padding-right: 0px; padding-left: 0px;">
@@ -49,29 +57,22 @@
 						<h6 style="text-transform: uppercase;font-size: 14px;line-height: 18px;margin-bottom: 0px; font-weight: bold;">{{ product.name }}</h6>
 						<small>Location {{ product.created_at | timesince }}</small>
 						<hr style="margin-bottom: 10px;margin-top: 5px;">
-						<p>{{ product.description }}</p><br>
+						<p style="font-size: 12px;">{{ product.description }} </p> 
+
 						<!-- Maps -->
 						<h6 style="text-transform: uppercase;font-size: 14px;line-height: 18px;margin-bottom: 0px;font-weight: bold;">Seller information</h6><br>
 						<div class="media">
 						    <img class="rounded-circle detail-account-img" src="{{ product.author.profile.image.url }}">
 						    <div class="media-body">
-						       <p class="account-heading" >{{ product.author.username }}</p>
+						       <p class="account-heading" >{{ product.author.username }}  </p>
 						    </div>
 						</div>
 						<hr style="margin-bottom: 10px;margin-top: 5px;">
-						<small>Report this listing if you think it discriminates against people</small><br><br>
+						<small>Report this listing if you think it discriminates against people</small><br>
 						<button class="btn btn-primary btn-sm btn-block btn-fb" style="color: white" ><span class="fas cart-plus"></span> Add to Cart</button>
 					</div>
 				</div>
-			</div>
-					
-					
-					
-					
-
-					
-					
-					
+			</div>	
 		</div>
 	</div>
 

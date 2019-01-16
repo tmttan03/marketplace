@@ -36,19 +36,19 @@ class PostView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
          context = super(PostView, self).get_context_data(**kwargs)
          context['form'] = self.form()
-         context['i_form'] = self.i_form()
+         #context['i_form'] = self.i_form()
          return context
 
     def post(self,*args,**kwargs):
     	form = self.form(self.request.POST)
-    	if form.is_valid() and i_form.is_valid(): 
+    	if form.is_valid(): 
             product = form.save(commit=False)
             product.author = self.request.user
             product.save()
-            i_form.save()
+            #i_form.save()
             messages.success(self.request, f'Successfully Added a New Item')
             return redirect('message')        
-    	return render(self.request, self.template_name,{'form': form, 'i_form':i_form})
+    	return render(self.request, self.template_name,{'form': form})
 
 
 class UpdateView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -79,6 +79,7 @@ class UpdateView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 class DetailView(DetailView):
     model = Product
     template_name = 'posts/includes/create-post-modal-body.html'
+
 
 class MessageView(TemplateView):
     template_name = 'posts/messages.html'
