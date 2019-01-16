@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserProductsListView , PostListView, PostView, DetailView, UpdateView, MessageView, DeleteView
+from .views import UserProductsListView , PostListView, PostView, DetailView, UpdateView, MessageView, DeleteView, BoughtProductsListView
 from . import views
 
 urlpatterns = [
@@ -11,4 +11,6 @@ urlpatterns = [
     path('update/<int:pk>/', UpdateView.as_view(), name='post-update'),
     #path('selling/<str:username>', UserProductsListView.as_view(), name='user-products'),
     path('selling/<int:pk>', UserProductsListView.as_view(), name='user-products'),
+    path('buying/<int:pk>', BoughtProductsListView.as_view(), name='bought-products'),
+    #path('cart/<int:pk>', BoughtProductsListView.as_view(), name='bought-products'),
 ]

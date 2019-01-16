@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from .forms import PostForm, UpdatePostForm, ImageFieldForm
 from .models import Product , Category, ProductAlbum
 
-from transactions.models import Transaction
+from transactions.models import Transaction, Payment
 from transactions.forms import ToCartForm
 
 class PostListView(TemplateView):
@@ -28,6 +28,17 @@ class UserProductsListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = get_object_or_404(User, pk=self.kwargs.get('pk'))
         return Product.objects.filter(author=user,status="1").order_by('-created_at')
+
+
+class BoughtProductsListView(LoginRequiredMixin, ListView):
+    model = Payment
+    template_name = 'posts/buying.html'
+    context_object_name = 'payments'
+
+    def get_queryset(self):
+        user = get_object_or_404(User, pk=self.kwargs.get('pk'))
+        return Payment.objects.filter(buyer=user)
+
 
 
 class PostView(LoginRequiredMixin, TemplateView):

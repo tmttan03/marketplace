@@ -1,0 +1,54 @@
+{% extends "posts/base.html" %}
+{% block content %}
+  {% for product in products %}
+  {% if user == product.author %}
+    <div class="card" style="padding: 10px">
+      <div class="media">
+        {% for photo in product.productalbum_set.all %} 
+          {% if forloop.counter == 1 %} 
+            <img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/> &nbsp;&nbsp;&nbsp;
+          {% endif %}
+        {% empty %} 
+          <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
+        {% endfor %}   
+        <div class="media-body">
+          <b><p class="mt-0" style="margin-bottom: 5px"> <span style="color: #71a830;">{{ product.price }}</span> - {{ product.name }}  <small>{{ product.created_at | timesince  }} </small> </p></b>
+          <p style="font-size: 13px">{{ product.description }}</p>
+          <button type="button" class="btn btn-secondary btn-fb btn-sm">Mark as Sold</button>
+          <button type="button" class="btn btn-secondary btn-sm">Mark as Pending</button>
+
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Manage
+            </button>
+            <div class="dropdown-menu">
+
+              <a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href="{% url 'delete-post' product.id %}"><span class="fas fa-times"></span> Delete</a>
+
+              <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' product.id %}"><span class="fas fa-pen"></span> Edit</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><br>
+  {% else %}
+      <meta http-equiv="refresh" content="0; url='{% url 'user-products' request.user.id %}'" />
+  {% endif %}
+  {% empty %}
+        <center><div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <h1 class="display-4">No Products Yet</h1>
+            <p class="lead">Start by Creating Your First Product. </p>
+          </div>
+        </div></center>
+  {% endfor %}
+
+
+<!--Update Modal-->
+{% include "posts/includes/update-post-modal-template.html" %}
+
+<!--Warning Delete Modal-->
+{% include "posts/includes/delete-modal.html" %}
+
+{% endblock content %}

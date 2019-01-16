@@ -187,6 +187,14 @@ a:hover{
   margin-bottom: 16px;
 }
 
+
+.sold-account-img{
+  height: 40px;
+  width: 40px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+}
+
 /* Upload */
 
 .file-upload {
