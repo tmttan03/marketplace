@@ -31,3 +31,4 @@ class ImageFieldForm(forms.Form):
     class Meta:
     	model = ProductAlbum
     	fields = ['img_field'] 
+

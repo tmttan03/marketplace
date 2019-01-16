@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from .forms import PostForm, UpdatePostForm, ImageFieldForm
 from .models import Product , Category, ProductAlbum
 
+from transactions.models import Transaction
+from transactions.forms import ToCartForm
 
 class PostListView(TemplateView):
     template_name = 'posts/home.html'
@@ -75,11 +77,36 @@ class UpdateView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             return True
         return False    
 
+    def post(self,*args,**kwargs):
+        form = UpdatePostForm(self.request.POST, instance=Product.objects.get(pk=self.kwargs['pk']))
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, f'Item Updated')
+            return redirect('message')
+        return render(self.request, self.template_name, {'form': form}) 
 
 class DetailView(DetailView):
     model = Product
     template_name = 'posts/includes/create-post-modal-body.html'
+    form = ToCartForm
 
+    def get_context_data(self, **kwargs):
+         context = super(DetailView, self).get_context_data(**kwargs)
+         context['form'] = self.form()
+         return context
+
+    def post(self,*args,**kwargs):
+        form = self.form(self.request.POST)
+        name = Transaction.objects.count() + 1
+        if form.is_valid(): 
+            item = form.save(commit=False)
+            item.product = Product.objects.get(pk=self.kwargs['pk'])
+            item.no = "Ref" + str(name)
+            item.save()
+            #i_form.save()
+            messages.success(self.request, f'Item Added to Cart')
+            return redirect('post-home')        
+        return render(self.request, self.template_name,{'form': form})
 
 class MessageView(TemplateView):
     template_name = 'posts/messages.html'

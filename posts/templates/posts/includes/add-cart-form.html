@@ -1,0 +1,10 @@
+<form id="add-tocart-form" method="POST" action="" novalidate>
+	{% csrf_token %}
+	<fieldset class="form-group">
+	    {{ form|crispy }}
+	</fieldset>
+
+	<div class="form-group">
+	    <button id="btn-add-cart" class="btn btn-fb btn-sm" type="submit">Add to Cart</button>
+	</div>
+</form>
