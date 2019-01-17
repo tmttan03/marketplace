@@ -41,15 +41,6 @@ class BoughtProductsListView(LoginRequiredMixin, ListView):
         user = get_object_or_404(User, pk=self.kwargs.get('pk'))
         return Transaction.objects.filter(buyer=user, status='0')
 
-class CartListView(ListView):
-    model = Order
-    template_name = 'posts/cart.html'
-    context_object_name = 'orders'
-
-    def get_queryset(self):
-        user = self.request.user
-        trans_no = Transaction.objects.get(buyer=self.request.user, status='1')
-        return Order.objects.filter(transaction=trans_no,status='1')
 
 class PostView(LoginRequiredMixin, TemplateView):
     template_name = 'posts/includes/create-post-modal.html'

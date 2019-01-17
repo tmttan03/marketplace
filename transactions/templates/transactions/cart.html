@@ -41,7 +41,7 @@
             </div>
         </td>
         <td  width="20%">{{ order.product.price|mul:order.qty }}</td>
-        <td width="5%"><a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href=""><span class="fas fa-times"></span></a></td>
+        <td width="5%"><a id="delete-cart-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteItemModal" href="{% url 'delete-item' order.id %}"><span class="fas fa-times"></span></a></td>
       </tr>
 {% empty %} 
       <tr> <br>
@@ -54,13 +54,10 @@
 </div>
 
 
-
-
-
 <!--Update Modal-->
 {% include "posts/includes/update-post-modal-template.html" %}
 
 <!--Warning Delete Modal-->
-{% include "posts/includes/delete-modal.html" %}
+{% include "transactions/includes/delete-item-modal.html" %}
 
 {% endblock content %}

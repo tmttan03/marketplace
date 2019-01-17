@@ -1,0 +1,9 @@
+<form id="inactive-cart-form" action="{% url 'delete-item' order.id %}" method="POST">
+	{% csrf_token %}
+    Are you sure you want to delete this post? <br><br>
+
+   	<div style="float: right;margin-bottom: 15px;"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	<button id="btn-submit" class="btn btn-fb " type="submit">Ok</button></div><br>
+</form>
+
+
