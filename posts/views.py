@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.views.generic import TemplateView , DetailView, ListView,View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -7,7 +9,7 @@ from django.contrib.auth.models import User
 from .forms import PostForm, UpdatePostForm, ImageFieldForm
 from .models import Product , Category, ProductAlbum
 
-from transactions.models import Transaction, Payment
+from transactions.models import Transaction, Payment, Order
 from transactions.forms import ToCartForm
 
 class PostListView(TemplateView):
@@ -31,15 +33,23 @@ class UserProductsListView(LoginRequiredMixin, ListView):
 
 
 class BoughtProductsListView(LoginRequiredMixin, ListView):
-    model = Payment
+    model = Transaction
     template_name = 'posts/buying.html'
     context_object_name = 'payments'
 
     def get_queryset(self):
         user = get_object_or_404(User, pk=self.kwargs.get('pk'))
-        return Payment.objects.filter(buyer=user)
+        return Transaction.objects.filter(buyer=user, status='0')
 
+class CartListView(ListView):
+    model = Order
+    template_name = 'posts/cart.html'
+    context_object_name = 'orders'
 
+    def get_queryset(self):
+        user = self.request.user
+        trans_no = Transaction.objects.get(buyer=self.request.user, status='1')
+        return Order.objects.filter(transaction=trans_no,status='1')
 
 class PostView(LoginRequiredMixin, TemplateView):
     template_name = 'posts/includes/create-post-modal.html'
@@ -102,19 +112,26 @@ class DetailView(DetailView):
     form = ToCartForm
 
     def get_context_data(self, **kwargs):
-         context = super(DetailView, self).get_context_data(**kwargs)
-         context['form'] = self.form()
-         return context
+        context = super(DetailView, self).get_context_data(**kwargs)
+        context['form'] = self.form()
+        return context
 
     def post(self,*args,**kwargs):
         form = self.form(self.request.POST)
-        name = Transaction.objects.count() + 1
+
         if form.is_valid(): 
             item = form.save(commit=False)
             item.product = Product.objects.get(pk=self.kwargs['pk'])
-            item.no = "Ref" + str(name)
+            item.reference_no = "Ref" + str(datetime.datetime.now())
+            try:
+                trans_no = Transaction.objects.get(buyer=self.request.user, status='1')
+                item.transaction = trans_no
+            except Transaction.DoesNotExist:
+                no = "Trans" +  str(datetime.datetime.now())
+                trans = Transaction(no=no, buyer=self.request.user)
+                trans.save()
+                item.transaction = trans
             item.save()
-            #i_form.save()
             messages.success(self.request, f'Item Added to Cart')
             return redirect('post-home')        
         return render(self.request, self.template_name,{'form': form})
