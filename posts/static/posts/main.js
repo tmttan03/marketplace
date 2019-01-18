@@ -70,13 +70,12 @@ $('#update_post_modal').on('hide.bs.modal', function (e) {
 $("a[id='detail-card']").click(function() {
   var link = $(this).attr('href');
   $('#detailModal').on('show.bs.modal', function (e) {
-    //var link = $("#detail-card").attr('href');
     console.log(link);
     $.ajax({
           url: link,
           method: "GET",
           success: function(response){
-            //console.log(response);
+            console.log(response);
             $('#detailModal').attr('data-url', link);
             $('#content-product').html(response);
           }

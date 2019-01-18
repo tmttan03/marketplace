@@ -14,6 +14,7 @@ from transactions.models import Transaction, Payment, Order
 from transactions.forms import ToCartForm
 
 class PostListView(TemplateView):
+    """Displays the list of products in the market."""
     template_name = 'posts/home.html'
 
     def get_context_data(self, **kwargs):
@@ -22,37 +23,46 @@ class PostListView(TemplateView):
          context['categories'] = Category.objects.all()
          context['productalbum'] = ProductAlbum.objects.all()
          return context
-  
-class UserProductsListView(LoginRequiredMixin, ListView):
-    model = Product
+
+class UserProductsListView(LoginRequiredMixin, TemplateView):
+    """Displays the list of products the user is selling."""
     template_name = 'posts/user_products.html'
-    context_object_name = 'products'
 
-    def get_queryset(self):
-        user = get_object_or_404(User, pk=self.kwargs.get('pk'))
-        return Product.objects.filter(author=user,status="1").order_by('-created_at')
+    def get_context_data(self, **kwargs):
+        context = super(UserProductsListView, self).get_context_data(**kwargs)
+        user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
+        context['products'] = Product.objects.filter(author=user,status="1").order_by('-created_at')
+        if self.kwargs.get('user_id') == self.request.user.id:
+            return context
+        raise Http404
 
-
-class BoughtProductsListView(LoginRequiredMixin, ListView):
-    model = Transaction
+        
+class BoughtProductsListView(LoginRequiredMixin, TemplateView):
+    """Displays the list of products the user purchased."""
     template_name = 'posts/buying.html'
-    context_object_name = 'payments'
 
-    def get_queryset(self):
-        user = get_object_or_404(User, pk=self.kwargs.get('pk'))
-        return Transaction.objects.filter(buyer=user, status='0')
+    def get_context_data(self, **kwargs):
+        context = super(BoughtProductsListView, self).get_context_data(**kwargs)
+        user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
+        context['payments'] = Transaction.objects.filter(buyer=user, status='0')
+        if self.kwargs.get('user_id') == self.request.user.id:
+            return context
+        raise Http404
 
 
 class PostView(LoginRequiredMixin, TemplateView):
+    """Create a Product"""
     template_name = 'posts/includes/create-post-modal.html'
     form = PostForm
     i_form = ImageFieldForm
 
     def get_context_data(self, **kwargs):
-         context = super(PostView, self).get_context_data(**kwargs)
-         context['form'] = self.form()
-         #context['i_form'] = self.i_form()
-         return context
+        if self.request.is_ajax():
+             context = super(PostView, self).get_context_data(**kwargs)
+             context['form'] = self.form()
+             #context['i_form'] = self.i_form()
+             return context
+        raise Http404
 
     def post(self,*args,**kwargs):
     	form = self.form(self.request.POST)
@@ -66,63 +76,8 @@ class PostView(LoginRequiredMixin, TemplateView):
     	return render(self.request, self.template_name,{'form': form})
 
 
-class UpdateView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-    model = Product
-    template_name = 'posts/includes/update-post-modal.html'
-    form = UpdatePostForm
-
-    def get_context_data(self, **kwargs):
-         context = super(UpdateView, self).get_context_data(**kwargs)
-         context['form'] = UpdatePostForm(instance=Product.objects.get(pk=self.kwargs['pk']))
-         return context
-
-    def post(self,*args,**kwargs):
-        form = UpdatePostForm(self.request.POST, instance=Product.objects.get(pk=self.kwargs['pk']))
-        if form.is_valid():
-            form.save()
-            messages.success(self.request, f'Item Updated')
-            return redirect('message')
-        return render(self.request, self.template_name, {'form': form}) 
-
-    def test_func(self):
-        post = Product.objects.get(pk=self.kwargs['pk'])
-        if self.request.user == post.author:
-            return True
-        return False 
-
-
-class DetailView(DetailView):
-    model = Product
-    template_name = 'posts/includes/create-post-modal-body.html'
-    form = ToCartForm
-
-    def get_context_data(self, **kwargs):
-        context = super(DetailView, self).get_context_data(**kwargs)
-        context['form'] = self.form()
-        return context
-
-    def post(self,*args,**kwargs):
-        form = self.form(self.request.POST)
-
-        if form.is_valid(): 
-            item = form.save(commit=False)
-            item.product = Product.objects.get(pk=self.kwargs['pk'])
-            item.reference_no = "Ref" + str(datetime.datetime.now())
-            try:
-                trans_no = Transaction.objects.get(buyer=self.request.user, status='1')
-                item.transaction = trans_no
-            except Transaction.DoesNotExist:
-                no = "Trans" +  str(datetime.datetime.now())
-                trans = Transaction(no=no, buyer=self.request.user)
-                trans.save()
-                item.transaction = trans
-            item.save()
-            messages.success(self.request, f'Item Added to Cart')
-            return redirect('post-home')        
-        return render(self.request, self.template_name, {'form': form})
-
-
 class MessageView(TemplateView):
+    """Message Content for Modal Info"""
     template_name = 'posts/messages.html'
 
     def get_context_data(self, **kwargs):
@@ -133,7 +88,7 @@ class MessageView(TemplateView):
 
 
 class DeleteView(LoginRequiredMixin, TemplateView):
-    """Delete Product."""
+    """Delete a Product."""
     model = Product
     template_name = 'posts/includes/warning-del-modal.html'
 
@@ -153,5 +108,61 @@ class DeleteView(LoginRequiredMixin, TemplateView):
         return redirect('user-products', self.request.user.id)
 
 
-       
-  
+class UpdateView(LoginRequiredMixin, TemplateView):
+    """Update Product Details."""
+    template_name = 'posts/includes/update-post-modal.html'
+    form = UpdatePostForm
+
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            context = super(UpdateView, self).get_context_data(**kwargs)
+            context['form'] = UpdatePostForm(instance=Product.objects.get(pk=self.kwargs.get('product_id')))
+            return render(self.request, self.template_name, context)
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        form = UpdatePostForm(self.request.POST, instance=Product.objects.get(pk=self.kwargs.get('product_id')))
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, f'Item Updated')
+            return redirect('message')
+        return render(self.request, self.template_name, {'form': form}) 
+
+
+class DetailView(TemplateView):
+    """Show Details of a Product"""
+    template_name = 'posts/includes/create-post-modal-body.html'
+    form = ToCartForm
+
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            context = super(DetailView, self).get_context_data(**kwargs)
+            context['product'] = Product.objects.get(pk=self.kwargs.get('product_id'))
+            context['form'] = ToCartForm()
+            return render(self.request, self.template_name, context)
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        form = self.form(self.request.POST)
+        if form.is_valid(): 
+            item = form.save(commit=False)
+            item.product = Product.objects.get(pk=self.kwargs['product_id'])
+            item.reference_no = "Ref" + str(datetime.datetime.now())
+            try:
+                trans_no = Transaction.objects.get(buyer=self.request.user, status='1')
+                item.transaction = trans_no
+            except Transaction.DoesNotExist:
+                no = "Trans" +  str(datetime.datetime.now())
+                trans = Transaction(no=no, buyer=self.request.user)
+                trans.save()
+                item.transaction = trans
+            item.save()
+            messages.success(self.request, f'Item Added to Cart')
+            return redirect('post-home')        
+        return render(self.request, self.template_name, {'form': form})
+
+
+    
+
+
+
