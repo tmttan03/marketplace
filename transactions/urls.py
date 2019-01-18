@@ -5,5 +5,6 @@ from . import views
 urlpatterns = [
     path('cart/', CartListView.as_view(), name='cart'),
     path('delete/item/<int:pk>/', DeleteItemView.as_view(), name='delete-item'),
+    #path('update/item/<int:pk>/', views.UpdateItemView, name='update-item'),
 ]
 

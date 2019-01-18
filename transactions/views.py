@@ -35,3 +35,8 @@ class DeleteItemView(LoginRequiredMixin, DetailView):
         #if self.request.user == post.author:
             #return True
         #return False   
+
+
+       
+
+     

@@ -37,3 +37,21 @@ $("a[id='delete-cart-btn']").click(function() {
 $('#inactive-cart-form').on('hide.bs.modal', function (e) {
     location.reload();
 });
+
+
+
+$("#target").change(function() {
+    var url = $('#UpdateItemForm').attr('action');
+    console.log(url);
+    e.preventDefault();
+    $.ajax({
+        url: url,
+        method: "POST",
+        data: $(this).val(),
+        success: function(response){
+            console.log(response)
+        }
+   })
+});
+
+

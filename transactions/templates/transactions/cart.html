@@ -2,10 +2,16 @@
 {% load mathfilters %}
 {% block content %}
 <h1> Your Shopping Cart </h1><br>
-
-
 <div class="card" style="padding: 10px">
     <table class="table">
+      <thead>
+        <th></th>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Sub-Total</th>
+        <th></th>
+      </thead>
     <tbody>
 {% for order in orders %}
       <tr>
@@ -16,29 +22,12 @@
       {% empty %} 
         <td width="15%"><img class="img-fluid" src="http://placehold.it/120" alt=""/></td>
     {% endfor %} 
-
-        <td width="40%">{{ order.product.name }} <br> <small>{{ order.reference_no }}<small></td>
-        <td width="15%">
-            <div class="input-group mb-3">
-              <select class="custom-select" id="inputGroupSelect01">
-                <option selected>Choose...</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-              </select>
-            </div>
+        <td width="40%">{{ order.product.name }} <br> <small>{{ order.reference_no }}</small><br><br><i> Comments:{{ order.comment }}</i> </td>
+        <td width="15%">{{ order.product.price }}</td>
+        <td width="15%" >
+            <form id="UpdateItemForm" method="POST" action="" novalidate>
+                <input type="number" class="form-control target" id='qty' name='qty' min="1" value='{{ order.qty }}'>
+            </form>
         </td>
         <td  width="20%">{{ order.product.price|mul:order.qty }}</td>
         <td width="5%"><a id="delete-cart-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteItemModal" href="{% url 'delete-item' order.id %}"><span class="fas fa-times"></span></a></td>
@@ -49,6 +38,13 @@
           <p class="lead">Start by Buying Now! </p></center>
       </tr>
 {% endfor %}
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Total: </td>
+      </tr>
     </tbody>
   </table>
 </div>

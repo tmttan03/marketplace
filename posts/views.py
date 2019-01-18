@@ -1,6 +1,7 @@
 import datetime
 
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
+from django.http import Http404
 from django.views.generic import TemplateView , DetailView, ListView,View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
@@ -87,15 +88,8 @@ class UpdateView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         post = Product.objects.get(pk=self.kwargs['pk'])
         if self.request.user == post.author:
             return True
-        return False    
+        return False 
 
-    def post(self,*args,**kwargs):
-        form = UpdatePostForm(self.request.POST, instance=Product.objects.get(pk=self.kwargs['pk']))
-        if form.is_valid():
-            form.save()
-            messages.success(self.request, f'Item Updated')
-            return redirect('message')
-        return render(self.request, self.template_name, {'form': form}) 
 
 class DetailView(DetailView):
     model = Product
@@ -125,7 +119,8 @@ class DetailView(DetailView):
             item.save()
             messages.success(self.request, f'Item Added to Cart')
             return redirect('post-home')        
-        return render(self.request, self.template_name,{'form': form})
+        return render(self.request, self.template_name, {'form': form})
+
 
 class MessageView(TemplateView):
     template_name = 'posts/messages.html'
@@ -136,17 +131,27 @@ class MessageView(TemplateView):
          context['categories'] = Category.objects.all()
          return context
 
-class DeleteView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+
+class DeleteView(LoginRequiredMixin, TemplateView):
+    """Delete Product."""
     model = Product
     template_name = 'posts/includes/warning-del-modal.html'
 
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            product = get_object_or_404(Product, id=self.kwargs.get('product_id'), author=self.request.user)
+            return render(self.request, self.template_name, {'product': product})
+        raise Http404
+
     def post(self,*args,**kwargs):
-        form = Product.objects.filter(pk=self.kwargs['pk']).update(status='Inactive')
-        messages.success(self.request, f'Item Deleted')
+        product = Product.objects.filter(id=self.kwargs.get('product_id'), author=self.request.user)
+        if product.exists():
+            product.update(status='0')
+            messages.success(self.request, f'Item Deleted')
+        else:
+            messages.error(self.request, f'Product Does not Exist')
         return redirect('user-products', self.request.user.id)
+
+
        
-    def test_func(self):
-        post = Product.objects.get(pk=self.kwargs['pk'])
-        if self.request.user == post.author:
-            return True
-        return False   
+  
