@@ -1,12 +1,12 @@
 {% load crispy_forms_tags %}
 <div class="card">
-  <form id="UpdateForm" method="POST" action="" novalidate>
+  <form id="UpdateCartForm" method="POST" action="" novalidate>
     {% csrf_token %}
     <fieldset class="form-group" enctype="multipart/form-data">
         {{ form| crispy }}
     </fieldset>
     <div class="form-group">
-        <button id="btn-update" class="btn btn-fb btn-sm" type="submit">Submit</button>
+        <button id="btn-update" class="btn btn-fb btn-sm" type="submit">Update Cart</button>
     </div>
 	</form>
  </div>

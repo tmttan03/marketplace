@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from transactions.models import Transaction, Payment, Order
 
 
 def register(request):
@@ -30,10 +31,17 @@ def profile(request):
 	else:
 		u_form = UserUpdateForm(instance=request.user)
 		p_form = ProfileUpdateForm(instance=request.user.profile)
-
+		if request.user.is_authenticated:
+			trans_no = Transaction.objects.filter(buyer=request.user, status='1')
+			if trans_no.exists(): 
+				no = Transaction.objects.get(buyer=request.user, status='1')
+				counter = Order.objects.filter(transaction=no,status='1').count()
+			counter = 0
+       
 	context = {
 		'u_form' : u_form,
 		'p_form' : p_form,
+		'counter' : counter,
 	}
 	return render(request, 'users/profile.html', context)
 

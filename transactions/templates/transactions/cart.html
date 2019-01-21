@@ -24,18 +24,22 @@
     {% endfor %} 
         <td width="40%">{{ order.product.name }} <br> <small>{{ order.reference_no }}</small><br><br><i> Comments:{{ order.comment }}</i> </td>
         <td width="15%">{{ order.product.price }}</td>
-        <td width="15%" >
-            <form id="UpdateItemForm" method="POST" action="" novalidate>
-                <input type="number" class="form-control target" id='qty' name='qty' min="1" value='{{ order.qty }}'>
-            </form>
-        </td>
+        <td width="15%">{{ order.qty }}</td>
         <td  width="20%">{{ order.product.price|mul:order.qty }}</td>
-        <td width="5%"><a id="delete-cart-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteItemModal" href="{% url 'delete-item' order.id %}"><span class="fas fa-times"></span></a></td>
+        <td width="5%"> 
+          <a id="edit-cart-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_cart_modal" href="{% url 'update-item' order.id %}"><span class="fas fa-pen"></span></a><br>
+          
+          <a id="delete-cart-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteItemModal" href="{% url 'delete-item' order.id %}"><span class="fas fa-times"></span></a></td>
+          </form>
       </tr>
 {% empty %} 
-      <tr> <br>
-          <center><h4 class="display-4">No Products Yet</h4>
-          <p class="lead">Start by Buying Now! </p></center>
+      <tr>
+        <td></td>
+        <td></td>
+        <td><center><h6 >You haven't added any items yet.</h6></center></td>
+        <td></td>
+        <td></td>
+        <td></td>
       </tr>
 {% endfor %}
       <tr>
@@ -49,9 +53,12 @@
   </table>
 </div>
 
+<br>
+<center><button type="button" class="btn btn-secondary">Continue Shopping</button>
+<button type="button" class="btn btn-fb">Checkout</button></center>
 
 <!--Update Modal-->
-{% include "posts/includes/update-post-modal-template.html" %}
+{% include "transactions/includes/update-cart-modal-template.html" %}
 
 <!--Warning Delete Modal-->
 {% include "transactions/includes/delete-item-modal.html" %}

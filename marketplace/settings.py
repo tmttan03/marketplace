@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'stripe',
     'mathfilters',
     'crispy_forms',
     'users.apps.UsersConfig',

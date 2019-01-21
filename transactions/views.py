@@ -8,8 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 
 from transactions.models import Transaction, Payment, Order
-from transactions.forms import ToCartForm
-
+from transactions.forms import ToCartForm, UpdateItemForm
 
 
 class CartListView(LoginRequiredMixin, TemplateView):
@@ -17,13 +16,19 @@ class CartListView(LoginRequiredMixin, TemplateView):
     template_name = 'transactions/cart.html'
 
     def get_context_data(self, **kwargs):
-        context = super(CartListView, self).get_context_data(**kwargs)
-        user = self.request.user
-        trans_no = Transaction.objects.get(buyer=user, status='1')
-        context['orders'] = Order.objects.filter(transaction=trans_no,status='1')
-        return context
-
+        if self.request.user.is_authenticated:
+            context = super(CartListView, self).get_context_data(**kwargs)
+            user = self.request.user
+            trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
+            if trans_no.exists(): 
+                no = Transaction.objects.get(buyer=user, status='1')
+                context['orders'] = Order.objects.filter(transaction=no,status='1')
+                context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+            else:
+                context['counter'] = 0
+            return context
         
+
 class DeleteItemView(LoginRequiredMixin, TemplateView):
     """Delete an Order."""
     template_name = 'transactions/includes/warning-cart-del-modal.html'
@@ -44,8 +49,24 @@ class DeleteItemView(LoginRequiredMixin, TemplateView):
         return redirect('cart')
 
 
+class UpdateItemView(LoginRequiredMixin, TemplateView):
+    """Update Product Details."""
+    template_name = 'transactions/includes/update-cart-modal.html'
+    form = UpdateItemForm
+
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            context = super(UpdateItemView, self).get_context_data(**kwargs)
+            context['form'] = UpdateItemForm(instance=Order.objects.get(pk=self.kwargs.get('order_id')))
+            return render(self.request, self.template_name, context)
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        form = UpdateItemForm(self.request.POST, instance=Order.objects.get(pk=self.kwargs.get('order_id')))
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, f'Cart Updated')
+            return redirect('message')
+        return render(self.request, self.template_name, {'form': form}) 
 
 
-       
-
-     

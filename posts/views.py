@@ -13,16 +13,25 @@ from .models import Product , Category, ProductAlbum
 from transactions.models import Transaction, Payment, Order
 from transactions.forms import ToCartForm
 
+
 class PostListView(TemplateView):
     """Displays the list of products in the market."""
     template_name = 'posts/home.html'
 
     def get_context_data(self, **kwargs):
-         context = super(PostListView, self).get_context_data(**kwargs)
-         context['products'] = Product.objects.filter(status="1")
-         context['categories'] = Category.objects.all()
-         context['productalbum'] = ProductAlbum.objects.all()
-         return context
+        context = super(PostListView, self).get_context_data(**kwargs)
+        context['products'] = Product.objects.filter(status="1")
+        context['categories'] = Category.objects.all()
+        context['productalbum'] = ProductAlbum.objects.all()
+        if self.request.user.is_authenticated:
+            trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
+            if trans_no.exists(): 
+                no = Transaction.objects.get(buyer=self.request.user, status='1')
+                context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+            else:
+                context['counter'] = 0
+        return context
+
 
 class UserProductsListView(LoginRequiredMixin, TemplateView):
     """Displays the list of products the user is selling."""
@@ -32,11 +41,19 @@ class UserProductsListView(LoginRequiredMixin, TemplateView):
         context = super(UserProductsListView, self).get_context_data(**kwargs)
         user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
         context['products'] = Product.objects.filter(author=user,status="1").order_by('-created_at')
-        if self.kwargs.get('user_id') == self.request.user.id:
-            return context
-        raise Http404
+        if self.request.user.is_authenticated:
+            trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
+            if self.kwargs.get('user_id') == self.request.user.id:
+                if trans_no.exists(): 
+                    no = Transaction.objects.get(buyer=self.request.user, status='1')
+                    context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+                    return context
+                else:
+                    context['counter'] = 0
+                    return context
+            raise Http404
 
-        
+
 class BoughtProductsListView(LoginRequiredMixin, TemplateView):
     """Displays the list of products the user purchased."""
     template_name = 'posts/buying.html'
@@ -45,9 +62,17 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
         context = super(BoughtProductsListView, self).get_context_data(**kwargs)
         user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
         context['payments'] = Transaction.objects.filter(buyer=user, status='0')
-        if self.kwargs.get('user_id') == self.request.user.id:
-            return context
-        raise Http404
+        if self.request.user.is_authenticated:
+            trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
+            if self.kwargs.get('user_id') == self.request.user.id:
+                if trans_no.exists(): 
+                    no = Transaction.objects.get(buyer=self.request.user, status='1')
+                    context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+                    return context
+                else:
+                    context['counter'] = 0
+                    return context
+            raise Http404
 
 
 class PostView(LoginRequiredMixin, TemplateView):
