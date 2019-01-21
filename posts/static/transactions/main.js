@@ -78,3 +78,16 @@ $('#update_cart_modal').on('hide.bs.modal', function (e) {
 });
 
 
+/* Compute Total*/
+
+var totals=0;
+$(document).ready(function(){
+    var $dataRows=$("#shop-cart tr:not('.totalColumn, .titlerow')");
+    $dataRows.each(function() {
+        $(this).find('.rowDataSd').each(function(i){        
+            totals+=parseInt( $(this).html());
+        });
+    });
+    var fixed_total = totals.toFixed(2);
+    $("#shop-cart td.totalCol").html("Total: "+fixed_total);
+});

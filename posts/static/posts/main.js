@@ -45,6 +45,8 @@ $("a[id='edit-btn']").click(function() {
   });
  });
 
+
+
 $("a[id='edit-btn']").click(function() {
     var url = $(this).attr('href');
 $(document).on('submit', '#UpdateForm', function (e){

@@ -3,8 +3,8 @@
 {% block content %}
 <h1> Your Shopping Cart </h1><br>
 <div class="card" style="padding: 10px">
-    <table class="table">
-      <thead>
+    <table class="table" id="shop-cart">
+      <thead class="titlerow">
         <th></th>
         <th>Product</th>
         <th>Price</th>
@@ -14,7 +14,7 @@
       </thead>
     <tbody>
 {% for order in orders %}
-      <tr>
+      <tr class="rowDataSd">
     {% for photo in order.product.productalbum_set.all %} 
       {% if forloop.counter == 1 %} 
         <td width="15%"><img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/></td>
@@ -25,7 +25,7 @@
         <td width="40%">{{ order.product.name }} <br> <small>{{ order.reference_no }}</small><br><br><i> Comments:{{ order.comment }}</i> </td>
         <td width="15%">{{ order.product.price }}</td>
         <td width="15%">{{ order.qty }}</td>
-        <td  width="20%">{{ order.product.price|mul:order.qty }}</td>
+        <td width="20%" class="rowDataSd">{{ order.product.price|mul:order.qty }}</td>
         <td width="5%"> 
           <a id="edit-cart-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_cart_modal" href="{% url 'update-item' order.id %}"><span class="fas fa-pen"></span></a><br>
           
@@ -42,12 +42,12 @@
         <td></td>
       </tr>
 {% endfor %}
-      <tr>
+      <tr class="totalColumn">
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td>Total: </td>
+        <td class="totalCol">Total: </td>
       </tr>
     </tbody>
   </table>
