@@ -18,7 +18,7 @@
                   <div class="card-content" id="product-details">
                       <hr>
                        <b><p>{{ product.name }} </p></b>
-                       <small>Location {{ product.created_at | timesince }}</small>
+                       <small>{{ product.location }} {{ product.created_at | timesince }}</small>
                       <br>
                   </div><!-- card content -->
               </div><!-- card -->

@@ -61,7 +61,11 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(BoughtProductsListView, self).get_context_data(**kwargs)
         user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
-        context['payments'] = Transaction.objects.filter(buyer=user, status='0')
+        #Trans = Transaction.objects.filter(buyer=user, status='0') 
+        transactions = Transaction.objects.filter(buyer=self.request.user, status='0').values_list()
+        context['payments'] = Order.objects.filter(transaction=transactions[0][0],status='1')
+            #context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+
         if self.request.user.is_authenticated:
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if self.kwargs.get('user_id') == self.request.user.id:
@@ -74,6 +78,23 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
                     return context
             raise Http404
 
+
+#class BoughtProductsListView(LoginRequiredMixin, TemplateView):
+    """Displays the unpaid orders of the user"""
+    #template_name = 'posts/buying.html'
+
+    #def get_context_data(self, **kwargs):
+        #if self.request.user.is_authenticated:
+            #context = super(BoughtProductsListView, self).get_context_data(**kwargs)
+            #user = self.request.user
+            #trans_no = Transaction.objects.filter(buyer=self.request.user, status='0')
+            #if trans_no.exists(): 
+                #for no in Transaction.objects.filter(buyer=user, status='0'):
+                    #context['payments'] = Order.objects.filter(transaction=no,status='1')
+                    #context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+            #else:
+                #context['counter'] = 0
+            #return context
 
 class PostView(LoginRequiredMixin, TemplateView):
     """Create a Product"""

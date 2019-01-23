@@ -4,21 +4,21 @@
     {%  for pay in payments  %}
         {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
           <div class="col-xl-3">
-              <a href="{% url 'view-post' pay.transaction.product.id %}" id="detail-card" data-toggle="modal" data-target="#detailModal" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ pay.transaction.product.name }}"> 
+              <a href="{% url 'view-post' pay.product.id %}" id="detail-card" data-toggle="modal" data-target="#detailModal" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ pay.product.name }}"> 
                 <div class="card">
-                {% for photo in pay.transaction.product.productalbum_set.all %} 
+                {% for photo in pay.product.productalbum_set.all %} 
                     {% if forloop.counter == 1 %} 
                         <img class="img-fluid" src="{{ photo.image.url }}" width="255" height="245" /> 
                     {% endif %}
                 {% empty %}
                   <img class="img-fluid" src="http://placehold.it/245" alt=""/> 
                 {% endfor %}
-                  <span class="badge badge-dark" id="price-badge">{{ pay.transaction.product.price }}</span>
+                  <span class="badge badge-dark" id="price-badge">{{ pay.product.price }}</span>
 
                   <div class="card-content" id="product-details">
                       <hr>
-                       <b><p><span style="color: red">Sold</span> {{ pay.transaction.product.name }} </p></b>
-                       <small>Location {{ pay.transaction.product.created_at | timesince }}</small>
+                       <b><p><span style="color: red">Sold</span> {{ pay.product.name }} </p></b>
+                       <small>Location {{ pay.product.created_at | timesince }}</small>
                   </div><!-- card content -->
               </div><!-- card -->
             </a><!-- link -->

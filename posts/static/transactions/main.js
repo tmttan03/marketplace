@@ -101,7 +101,7 @@ $(document).ready(function(){
         });
     });
     var fixed_total = totals.toFixed(2);
-    $("#grndtotal").html(fixed_total);
+    $("#grndtotal").html("Total: " + fixed_total);
     $("#grndtotal1").val(fixed_total);
 });
 

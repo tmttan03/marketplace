@@ -29,7 +29,7 @@ class Order(models.Model):
 	
 	STATUS_CHOICES = (
 		(INACTIVE, "Inactive"),
-		(ACTIVE, "Acttive"),
+		(ACTIVE, "Active"),
 	)
 	transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 	reference_no = models.CharField(max_length=100)

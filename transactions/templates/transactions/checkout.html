@@ -26,15 +26,15 @@
    </div>
 </div>
 {% endfor %}
- <div class="card" style="padding: 10px; text-align: right;">
+ <div class="card" style="padding: 5px; text-align: right;">
     <span id="grndtotal">0.00</span>
-</div>
+</div><br>
 
-<form method="POST" action="{% url 'checkout' %}">
+<form method="POST" action="{% url 'checkout' %}" style="float: right">
   {% csrf_token %}
   <input type="hidden" id="grndtotal1" name="grndtotal1">
   <div class="form-group">
-      <button  class="btn btn-fb btn-sm" type="submit">Checkout</button>
+      <button  class="btn btn-fb btn-block" type="submit" id="checkout-btn">Make a Payment</button>
   </div>
 </form>
 
