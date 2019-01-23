@@ -134,3 +134,13 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'post-home'
 
 LOGIN_URL = 'login'
+
+if DEBUG:
+    #test keys
+    STRIPE_PUBLISHABLE_KEY = "pk_test_0sQvi7XbIY8nIRFUCBD6A2qT"
+    STRIPE_SECRET_KEY = "sk_test_LWtBD1TOvlfIMzdIawpJvHzj"
+else:
+    #Live keys
+    STRIPE_PUBLISHABLE_KEY = ""
+    STRIPE_SECRET_KEY = ""
+

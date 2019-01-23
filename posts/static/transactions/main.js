@@ -91,3 +91,20 @@ $(document).ready(function(){
     var fixed_total = totals.toFixed(2);
     $("#shop-cart td.totalCol").html("Total: "+fixed_total);
 });
+
+
+$(document).ready(function(){
+    var $dataRows=$("#item-card .media-body");
+    $dataRows.each(function() {
+        $(this).find('#sub-total').each(function(i){        
+            totals+=parseInt( $(this).html());
+        });
+    });
+    var fixed_total = totals.toFixed(2);
+    $("#grndtotal").html(fixed_total);
+    $("#grndtotal1").val(fixed_total);
+});
+
+
+
+    

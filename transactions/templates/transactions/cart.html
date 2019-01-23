@@ -30,7 +30,6 @@
           <a id="edit-cart-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_cart_modal" href="{% url 'update-item' order.id %}"><span class="fas fa-pen"></span></a><br>
           
           <a id="delete-cart-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteItemModal" href="{% url 'delete-item' order.id %}"><span class="fas fa-times"></span></a></td>
-          </form>
       </tr>
 {% empty %} 
       <tr>
@@ -54,8 +53,15 @@
 </div>
 
 <br>
-<center><button type="button" class="btn btn-secondary">Continue Shopping</button>
-<button type="button" class="btn btn-fb">Checkout</button></center>
+<center>
+  <button type="button" class="btn btn-secondary">Continue Shopping</button>
+  <button class="btn btn-fb" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Checkout</button>
+</center><br>
+
+
+
+
+
 
 <!--Update Modal-->
 {% include "transactions/includes/update-cart-modal-template.html" %}
