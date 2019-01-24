@@ -1,6 +1,6 @@
 import datetime
 import stripe
-import math
+import math 
 
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
@@ -13,7 +13,9 @@ from django.contrib.auth.models import User
 from transactions.models import Transaction, Payment, Order
 from transactions.forms import ToCartForm, UpdateItemForm
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+#stripe.api_key = settings.STRIPE_SECRET_KEY
+stripe.api_key = "sk_test_LWtBD1TOvlfIMzdIawpJvHzj"
+
 
 class CartListView(LoginRequiredMixin, TemplateView):
     """Displays the unpaid orders of the user"""
@@ -112,9 +114,9 @@ class PaymentView(LoginRequiredMixin, TemplateView):
                 no = Transaction.objects.get(buyer=user, status='1')
                 context['orders'] = Order.objects.filter(transaction=no,status='1')
                 context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+                return context
             else:
-                context['counter'] = 0
-            return context
+                raise Http404
 
     def post(self,*args,**kwargs):
         context = super(PaymentView, self).get_context_data(**kwargs)
@@ -123,10 +125,20 @@ class PaymentView(LoginRequiredMixin, TemplateView):
         if trans_no.exists(): 
             no = Transaction.objects.get(buyer=user, status='1')
             payment_no = "Payment" +  str(datetime.datetime.now())
-            amount = self.request.POST['grndtotal1']
+            amount = round(float(self.request.POST['grndtotal1'])*100)
+            token = self.request.POST['stripeToken']
+            description = "Payment for " + no.no
+            name = user.first_name + " "+ user.last_name
             payment = Payment(no=payment_no, transaction=no, amount_due=amount)
             payment.save()
             trans_no.update(status='0')
+            charge = stripe.Charge.create(
+                amount=amount,
+                currency='usd',
+                description=description,
+                source=token,
+                #customer=name,
+            )
             messages.success(self.request, f'Succesfully Purchased the items')
             return redirect('cart')
         else:

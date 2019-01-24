@@ -8,7 +8,7 @@ $('#new_post_modal').on('show.bs.modal', function (e) {
           $('#new-post').html(response);
         }
    })
-});
+}); 
 
 $(document).on('submit', '#post-create-form', function (e){
     var url = $(this).attr("action");

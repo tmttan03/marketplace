@@ -1,0 +1,41 @@
+{% extends "posts/base.html" %}
+{% load mathfilters %}
+{% block content %}
+
+{% for order in orders %}
+ <div class="card" style="padding: 10px" id="item-card">
+    <div class="media">
+      {% for photo in order.product.productalbum_set.all %} 
+        {% if forloop.counter == 1 %} 
+          <img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/> &nbsp;&nbsp;&nbsp;
+        {% endif %}
+      {% empty %} 
+        <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
+      {% endfor %}   
+      <div class="media-body">
+        <b><p class="mt-0" style="margin-bottom: 5px"> <span>{{ order.qty }}</span> x {{ order.product.name }}  <span style="float: right" id="sub-total">{{ order.product.price|mul:order.qty }}</span></p></b>
+        <small>{{ order.reference_no }}</small><br><br>
+        <i><p style="font-size: 14px">Comments: {{ order.comment }}</p></i>
+      </div>
+    </div>
+</div>
+{% empty %} 
+ <div class="card" style="padding: 10px">
+   <div class="media">
+      <h6 >You haven't added any items yet.</h6>
+   </div>
+</div>
+{% endfor %}
+ <div class="card" style="padding: 5px; text-align: right;">
+    <span id="grndtotal">0.00</span>
+</div><br>
+
+<form method="POST" action="{% url 'checkout' %}" style="float: right">
+  {% csrf_token %}
+  <input type="hidden" id="grndtotal1" name="grndtotal1">
+  <div class="form-group">
+      <button  class="btn btn-fb btn-block" type="submit" id="checkout-btn">Make a Payment</button>
+  </div>
+</form>
+
+{% endblock content %}
