@@ -53,14 +53,16 @@
 </div>
 
 <br>
+
+{% if counter != 0 %}
 <center>
-  <button type="button" class="btn btn-secondary">Continue Shopping</button>
-  <button class="btn btn-fb" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Checkout</button>
-</center><br>
-
-
-
-
+  <a href="{% url 'post-home'  %}"><span style="float: left;"><i class="fas fa-long-arrow-alt-left"></i></i> Continue Shopping</span></a>
+   <a href="{% url 'checkout'  %}"><span style="float: right;"> Checkout <i class="fas fa-long-arrow-alt-right"></i></span>
+</center><br></a>
+{% else %}
+<center>
+  <a href="{% url 'post-home'  %}"><span style="float: left;"><i class="fas fa-long-arrow-alt-left"></i></i> Continue Shopping</span></a>
+{% endif %}
 
 
 <!--Update Modal-->

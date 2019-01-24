@@ -11,8 +11,8 @@ class ToCartForm(forms.ModelForm):
 		fields = ['qty','comment']
 
 class UpdateItemForm(forms.ModelForm):
-	qty = forms.CharField(label='', widget=forms.TextInput(attrs={'id':'target'}))
-	comment = forms.CharField(max_length=500,label='', widget=forms.Textarea(attrs={'placeholder':'Comment','rows':'3', 'id':'target'}))
+	qty = forms.CharField(label='')
+	comment = forms.CharField(max_length=500,label='', widget=forms.Textarea(attrs={'placeholder':'Comment','rows':'3'}))
 
 	class Meta:
 		model = Order

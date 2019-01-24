@@ -75,7 +75,7 @@
               <span id="grndtotal">0.00</span>
           </div><br>
 
-          <a href="{% url 'cart' %}"><span><i class="fas fa-chevron-left"></i> Cancel Payment</span></a>
+          <a href="{% url 'cart' %}"><span><i class="fas fa-long-arrow-alt-left"></i></i> Cancel Payment</span></a>
 
         </div>
 
@@ -83,9 +83,8 @@
             <form method="POST" action="{% url 'checkout' %}" style="float: right" id="payment-form">
               {% csrf_token %}
                <div class="form-row">
-                  <h1> Payments </h1>
-                  <h6> Fill in card details to begin<h6>
-                  <br><br>
+                  <h3> Payments </h3><h6> Fill in card details to begin<h6>
+                  <br>
                   <div id="card-element" style="width:500px!important">
                     <!-- A Stripe Element will be inserted here. -->
                   </div><br>

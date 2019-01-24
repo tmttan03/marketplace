@@ -63,7 +63,8 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
         user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
         #Trans = Transaction.objects.filter(buyer=user, status='0') 
         transactions = Transaction.objects.filter(buyer=self.request.user, status='0').values_list()
-        context['payments'] = Order.objects.filter(transaction=transactions[0][0],status='1')
+        context['transactions'] = Transaction.objects.filter(buyer=self.request.user, status='0')
+        context['orders'] = Order.objects.all()
             #context['counter'] = Order.objects.filter(transaction=no,status='1').count()
 
         if self.request.user.is_authenticated:

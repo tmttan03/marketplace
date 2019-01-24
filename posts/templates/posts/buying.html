@@ -1,29 +1,33 @@
 {% extends "posts/base.html" %}
 {% block content %}
  <div class="container">
-    {%  for pay in payments  %}
-        {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
-          <div class="col-xl-3">
-              <a href="{% url 'view-post' pay.product.id %}" id="detail-card" data-toggle="modal" data-target="#detailModal" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ pay.product.name }}"> 
-                <div class="card">
-                {% for photo in pay.product.productalbum_set.all %} 
-                    {% if forloop.counter == 1 %} 
-                        <img class="img-fluid" src="{{ photo.image.url }}" width="255" height="245" /> 
-                    {% endif %}
-                {% empty %}
-                  <img class="img-fluid" src="http://placehold.it/245" alt=""/> 
-                {% endfor %}
-                  <span class="badge badge-dark" id="price-badge">{{ pay.product.price }}</span>
+    {%  for transaction in transactions  %}
+        {%  for order in orders  %}
+            {% if transaction.no == order.transaction.no %}
+                {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
+                  <div class="col-xl-3">
+                      <a href="{% url 'view-post' order.product.id %}" id="detail-card" data-toggle="modal" data-target="#detailModal" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ order.product.name }}"> 
+                        <div class="card">
+                        {% for photo in order.product.productalbum_set.all %} 
+                            {% if forloop.counter == 1 %} 
+                                <img class="img-fluid" src="{{ photo.image.url }}" width="255" height="245" /> 
+                            {% endif %}
+                        {% empty %}
+                          <img class="img-fluid" src="http://placehold.it/245" alt=""/> 
+                        {% endfor %}
+                          <span class="badge badge-dark" id="price-badge">{{ order.product.price }}</span>
 
-                  <div class="card-content" id="product-details">
-                      <hr>
-                       <b><p><span style="color: red">Sold</span> {{ pay.product.name }} </p></b>
-                       <small>Location {{ pay.product.created_at | timesince }}</small>
-                  </div><!-- card content -->
-              </div><!-- card -->
-            </a><!-- link -->
-          </div><!-- col-xl-4 -->
-    {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><br><!-- row closing -->{%  endif %}
+                          <div class="card-content" id="product-details">
+                              <hr>
+                               <b><p><span style="color: red">Sold</span> {{ order.product.name }} </p></b>
+                               <small>Location {{ order.product.created_at | timesince }}</small>
+                          </div><!-- card content -->
+                      </div><!-- card -->
+                    </a><!-- link -->
+                  </div><!-- col-xl-4 -->
+                {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><br><!-- row closing -->{%  endif %}
+          {% endif %}
+        {%  endfor %}
     {% empty %}
         <center><div class="jumbotron jumbotron-fluid">
           <div class="container">

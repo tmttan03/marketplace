@@ -110,12 +110,12 @@ a:hover{
   padding: 5;
 }
 
-#id_name, #id_price, #id_location, #id_category{
+#id_name, #id_price, #id_location, #id_category, #id_qty{
   border: none;
   border-bottom: 1px solid #ccd4da;
 }
 
-#id_description{
+#id_description, #id_comment{
   border: none;
 }
 
