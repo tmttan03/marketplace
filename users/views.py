@@ -36,7 +36,8 @@ def profile(request):
 			if trans_no.exists(): 
 				no = Transaction.objects.get(buyer=request.user, status='1')
 				counter = Order.objects.filter(transaction=no,status='1').count()
-			counter = 0
+			else:
+				counter = 0
        
 	context = {
 		'u_form' : u_form,
