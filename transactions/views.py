@@ -127,7 +127,7 @@ class PaymentView(LoginRequiredMixin, TemplateView):
             payment_no = "Payment" +  str(datetime.datetime.now())
             amount = round(float(self.request.POST['grndtotal1'])*100)
             token = self.request.POST['stripeToken']
-            description = "Payment for " + no.no
+            description = "Payment for " + no.no +" " + user.first_name + " " + user.last_name
             name = user.first_name + " "+ user.last_name
             payment = Payment(no=payment_no, transaction=no, amount_due=amount)
             payment.save()
@@ -139,7 +139,7 @@ class PaymentView(LoginRequiredMixin, TemplateView):
                 source=token,
                 #customer=name,
             )
-            messages.success(self.request, f'Succesfully Purchased the items')
+            messages.success(self.request, f'Succesfully purchased the item/s')
             return redirect('cart')
         else:
             messages.info(self.request, f"Add items to cart first")

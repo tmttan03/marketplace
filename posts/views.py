@@ -66,18 +66,7 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
         orders = Order.objects.all()
         context['transactions'] = Transaction.objects.filter(buyer=self.request.user, status='0')
         context['orders'] = Order.objects.filter(status='1').all()
-        #context['transactions'] = Transaction.objects.filter(buyer=self.request.user, status='0')
-        #import pdb; pdb.set_trace()
-       # sold_items = []
-        #for order in orders:
-            #for transaction in transactions:
-                #if order.transaction.no == transaction.no:
-                    #sold_items.append(Order.objects.filter(transaction=transaction, status='1'))
-                    #import pdb; pdb.set_trace()
-
-                    
-            #context['counter'] = Order.objects.filter(transaction=no,status='1').count()
-
+        
         if self.request.user.is_authenticated:
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if self.kwargs.get('user_id') == self.request.user.id:

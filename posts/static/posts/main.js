@@ -77,7 +77,7 @@ $("a[id='detail-card']").click(function() {
           url: link,
           method: "GET",
           success: function(response){
-            console.log(response);
+            //console.log(response);
             $('#detailModal').attr('data-url', link);
             $('#content-product').html(response);
           }
