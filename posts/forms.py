@@ -26,7 +26,7 @@ class UpdatePostForm(forms.ModelForm):
 
 
 class ImageFieldForm(forms.Form):
-    img_field = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label='')
+    img_field = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label='')
 
     class Meta:
     	model = ProductAlbum

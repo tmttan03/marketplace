@@ -65,7 +65,7 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
         transactions = Transaction.objects.filter(buyer=self.request.user, status='0')
         orders = Order.objects.all()
         context['transactions'] = Transaction.objects.filter(buyer=self.request.user, status='0')
-        context['orders'] = Order.objects.all()
+        context['orders'] = Order.objects.filter(status='1').all()
         #context['transactions'] = Transaction.objects.filter(buyer=self.request.user, status='0')
         #import pdb; pdb.set_trace()
        # sold_items = []
@@ -106,15 +106,16 @@ class PostView(LoginRequiredMixin, TemplateView):
         raise Http404
 
     def post(self,*args,**kwargs):
-    	form = self.form(self.request.POST)
-    	if form.is_valid(): 
+        form = self.form(self.request.POST)
+        #i_form = self.i_form(self.request.POST,self.request.FILES)
+        if form.is_valid() :
             product = form.save(commit=False)
             product.author = self.request.user
             product.save()
-            #i_form.save()
+            #import pdb; pdb.set_trace()
             messages.success(self.request, f'Successfully Added a New Item')
             return redirect('message')        
-    	return render(self.request, self.template_name,{'form': form})
+        return render(self.request, self.template_name,{'form': form, 'i_form': i_form})
 
 
 class MessageView(TemplateView):

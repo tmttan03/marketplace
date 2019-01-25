@@ -13,6 +13,13 @@ class UserRegisterForm(UserCreationForm):
         model = User
         fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
 
+    def clean_email(self):
+	    data = self.cleaned_data['email']
+	    if User.objects.filter(email=data).exists():
+	        raise forms.ValidationError("This email already used")
+	    return data   
+    
+
 
 class UserUpdateForm(forms.ModelForm):
 	email = forms.EmailField()
@@ -29,4 +36,4 @@ class ProfileUpdateForm(forms.ModelForm):
 		model = Profile
 		fields = ['image']
 
-
+        
