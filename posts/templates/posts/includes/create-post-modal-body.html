@@ -54,9 +54,8 @@
 						<h6 style="text-transform: uppercase;font-size: 14px;line-height: 18px;margin-bottom: 0px; font-weight: bold;">{{ product.name }}</h6>
 						<small>{{ product.location }} {{ product.created_at | timesince }}</small>
 						<hr style="margin-bottom: 10px;margin-top: 5px;">
-						<p style="font-size: 12px;">{{ product.description }} </p> 
+						<p style="font-size: 13px;">{{ product.description }} </p> 
 
-						<!-- Maps -->
 						<h6 style="text-transform: uppercase;font-size: 14px;line-height: 18px;margin-bottom: 0px;font-weight: bold;">Seller information</h6><br>
 						<div class="media">
 						    <img class="rounded-circle detail-account-img" src="{{ product.author.profile.image.url }}">
@@ -64,9 +63,10 @@
 						       <p class="account-heading" >{{ product.author.username }}  </p>
 						    </div>
 						</div>
-						<hr style="margin-bottom: 10px;margin-top: 5px;">
+						
 						{% if user.is_authenticated %}
 							{% if user != product.author %}
+							<hr style="margin-bottom: 10px;margin-top: 5px;">
 								<div class="cart-div">
 									<form id="add-tocart-form" method="POST" action="{% url 'view-post' product.id %}">
 										{% csrf_token %}
@@ -80,7 +80,9 @@
 									</form>	
 								</div>
 							{% else %}
-								
+								<hr style="margin-bottom: 10px;margin-top: 5px;"><small class="text-muted">
+			                    	Currently selling this item. Stock management will be available soon. 
+			                	</small>
 							{% endif %}
 						{% else %}
 							 <small class="text-muted">

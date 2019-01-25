@@ -1,12 +1,13 @@
 {% extends "posts/base.html" %}
 {% block content %}
+
  <div class="container">
+  
     {%  for transaction in transactions  %}
         {%  for order in orders  %}
             {% if transaction.no == order.transaction.no %}
-                {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
-                  <div class="col-xl-3">
-                      <a href="{% url 'view-post' order.product.id %}" id="detail-card" data-toggle="modal" data-target="#detailModal" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ order.product.name }}"> 
+                {% if forloop.counter0|divisibleby:4  %} <div class="row text-center"> {%  endif %}
+                  <div class="col-xl-3" style="padding-bottom: 15px">
                         <div class="card">
                         {% for photo in order.product.productalbum_set.all %} 
                             {% if forloop.counter == 1 %} 
@@ -23,9 +24,9 @@
                                <small>Location {{ order.product.created_at | timesince }}</small>
                           </div><!-- card content -->
                       </div><!-- card -->
-                    </a><!-- link -->
+                    
                   </div><!-- col-xl-4 -->
-                {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><br><!-- row closing -->{%  endif %}
+                {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><br>{% endif %}
           {% endif %}
         {%  endfor %}
     {% empty %}
@@ -37,8 +38,6 @@
         </div></center>
     {%  endfor %}
 </div><!-- container -->
-
-    
 
 <!--Detail Modal-->
 {% include "posts/includes/post-detail-modal.html" %}

@@ -62,9 +62,20 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
         context = super(BoughtProductsListView, self).get_context_data(**kwargs)
         user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
         #Trans = Transaction.objects.filter(buyer=user, status='0') 
-        transactions = Transaction.objects.filter(buyer=self.request.user, status='0').values_list()
+        transactions = Transaction.objects.filter(buyer=self.request.user, status='0')
+        orders = Order.objects.all()
         context['transactions'] = Transaction.objects.filter(buyer=self.request.user, status='0')
         context['orders'] = Order.objects.all()
+        #context['transactions'] = Transaction.objects.filter(buyer=self.request.user, status='0')
+        #import pdb; pdb.set_trace()
+       # sold_items = []
+        #for order in orders:
+            #for transaction in transactions:
+                #if order.transaction.no == transaction.no:
+                    #sold_items.append(Order.objects.filter(transaction=transaction, status='1'))
+                    #import pdb; pdb.set_trace()
+
+                    
             #context['counter'] = Order.objects.filter(transaction=no,status='1').count()
 
         if self.request.user.is_authenticated:
@@ -78,24 +89,7 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
                     context['counter'] = 0
                     return context
             raise Http404
-
-
-#class BoughtProductsListView(LoginRequiredMixin, TemplateView):
-    """Displays the unpaid orders of the user"""
-    #template_name = 'posts/buying.html'
-
-    #def get_context_data(self, **kwargs):
-        #if self.request.user.is_authenticated:
-            #context = super(BoughtProductsListView, self).get_context_data(**kwargs)
-            #user = self.request.user
-            #trans_no = Transaction.objects.filter(buyer=self.request.user, status='0')
-            #if trans_no.exists(): 
-                #for no in Transaction.objects.filter(buyer=user, status='0'):
-                    #context['payments'] = Order.objects.filter(transaction=no,status='1')
-                    #context['counter'] = Order.objects.filter(transaction=no,status='1').count()
-            #else:
-                #context['counter'] = 0
-            #return context
+ 
 
 class PostView(LoginRequiredMixin, TemplateView):
     """Create a Product"""

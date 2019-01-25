@@ -4,9 +4,10 @@
     {% csrf_token %}
     <fieldset class="form-group">
         {{ form|crispy }}
-        {{ i_form |crispy }}
     </fieldset>
-
+    <fieldset class="module">
+      <input name="photos_multiple" type="file" multiple />
+    </fieldset>
     <div class="form-group">
         <button id="btn-create" class="btn btn-fb btn-sm" type="submit">Submit</button>
     </div>
