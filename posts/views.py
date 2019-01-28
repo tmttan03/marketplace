@@ -7,8 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from .forms import PostForm, UpdatePostForm, ImageFieldForm
-from .models import Product , Category, ProductAlbum
+from .forms import PostForm, UpdatePostForm, ImageFieldForm, StockForm
+from .models import Product , Category, ProductAlbum, Stock
 
 from transactions.models import Transaction, Payment, Order
 from transactions.forms import ToCartForm
@@ -84,22 +84,33 @@ class PostView(LoginRequiredMixin, TemplateView):
     template_name = 'posts/includes/create-post-modal.html'
     form = PostForm
     i_form = ImageFieldForm
+    s_form = StockForm
 
     def get_context_data(self, **kwargs):
         if self.request.is_ajax():
              context = super(PostView, self).get_context_data(**kwargs)
              context['form'] = self.form()
              #context['i_form'] = self.i_form()
+             context['s_form'] = self.s_form()
              return context
         raise Http404
 
     def post(self,*args,**kwargs):
         form = self.form(self.request.POST)
+        s_form = self.s_form(self.request.POST)
         #i_form = self.i_form(self.request.POST,self.request.FILES)
-        if form.is_valid() :
+        if form.is_valid():
             product = form.save(commit=False)
             product.seller = self.request.user
             product.save()
+
+            stock = s_form.save(commit=False)
+            #import pdb; pdb.set_trace()
+            stock.stock_no = "Stock#" +  str(datetime.datetime.now())
+            stock.product = product
+            stock.stock_on_hand = s_form.cleaned_data.get('stock_total')
+            stock.save()
+
             #import pdb; pdb.set_trace()
             messages.success(self.request, f'Successfully Added a New Item')
             return redirect('message')        
@@ -169,6 +180,13 @@ class DetailView(TemplateView):
             context = super(DetailView, self).get_context_data(**kwargs)
             context['product'] = Product.objects.get(pk=self.kwargs.get('product_id'))
             context['form'] = ToCartForm()
+            try:
+                stock = Stock.objects.get(status='1',product=self.kwargs.get('product_id'))
+                context['stock'] = stock
+            except Stock.DoesNotExist:
+                context['stock'] = {'stock_on_hand': 0}
+
+            #import pdb; pdb.set_trace()
             return render(self.request, self.template_name, context)
         raise Http404
 

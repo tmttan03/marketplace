@@ -64,20 +64,20 @@
 						    </div>
 						</div>
 						<hr style="margin-bottom: 10px;margin-top: 5px;">
-
-						{% if product.stock_on_hand == 0 %}
+				
+						{% if stock.stock_on_hand == 0 %}
 							<i><b><p style="color:#c0392b;font-size: 13px">Sorry, we are temporarily out of stock.</p></b></i>
 							<p style="font-size: 12px">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 							<small class="text-muted">
 				                Email notification for out of stock items will be available soon.
 				            </small>
 						{% else %}
-							<i><b><p style="color:#e67e22;font-size: 13px">In stock</p></b></i>
+							<i><b><p style="color:#e67e22;font-size: 13px">In stock ({{stock.stock_on_hand }}/{{stock.stock_total}})</p></b></i>
 						{% endif %}
 
 						{% if user.is_authenticated %}
 							{% if user != product.seller %}
-								{% if product.stock_on_hand > 0 %}
+								{% if stock.stock_on_hand > 0 %}
 									<div class="cart-div">
 										<form id="add-tocart-form" method="POST" action="{% url 'view-post' product.id %}">
 											{% csrf_token %}
@@ -92,7 +92,7 @@
 									</div>
 								{% endif %}
 							{% else %}
-								{% if product.stock_on_hand == 0 %}
+								{% if stock.stock_on_hand == 0 %}
 									<br><br><button type="button" class="btn btn-fb btn-sm  btn-block">Restock now!</button>
 								{% else %}
 									<p style="font-size: 12px">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
@@ -104,6 +104,8 @@
 			                    Want to Shop? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
 			                </small>
 						{% endif %}
+				
+
 					</div>
 				</div>
 			</div>	

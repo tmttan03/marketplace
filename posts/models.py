@@ -27,7 +27,7 @@ class Product(models.Model):
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	seller = models.ForeignKey(User, on_delete=models.CASCADE)
 	is_draft = models.BooleanField(default=False)
-	stock_on_hand = models.PositiveIntegerField(default=1)
+	#stock_on_hand = models.PositiveIntegerField(default=1)
 	status = models.CharField(
         max_length=2,
         choices=STATUS_CHOICES,
@@ -45,3 +45,28 @@ class ProductAlbum(models.Model):
 	uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
+class Stock(models.Model):
+	DELETED = '0'
+	AVAILABLE = '1'
+	SOLD = '2'
+
+	STATUS_CHOICES = (
+		(DELETED, "Deleted"),
+		(AVAILABLE, "Available"),
+		(SOLD, "Sold"),
+	)
+
+	stock_no = models.CharField(max_length=100)
+	product = models.ForeignKey(Product, on_delete=models.CASCADE)
+	stock_total = models.PositiveIntegerField(default=1)
+	stock_on_hand = models.PositiveIntegerField()
+	status = models.CharField(
+        max_length=2,
+        choices=STATUS_CHOICES,
+        default=AVAILABLE,
+    )
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.stock_no

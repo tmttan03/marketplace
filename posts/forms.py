@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Category, ProductAlbum
+from .models import Product, Category, ProductAlbum, Stock
 from django.contrib.auth.models import User
 
 class PostForm(forms.ModelForm):
@@ -10,7 +10,7 @@ class PostForm(forms.ModelForm):
 	location= forms.CharField(label='',widget=forms.TextInput(attrs={'onFocus':'geolocate()','autocomplete':'off', 'placeholder':'Location'}))
 	class Meta:
 		model = Product
-		fields = ['is_draft','name','price','location','category','description','stock_on_hand']
+		fields = ['is_draft','name','price','location','category','description']
 
 class UpdatePostForm(forms.ModelForm):
 	name = forms.CharField(max_length=100, label='', widget=forms.TextInput(attrs={'placeholder':'What are you selling?'}))
@@ -21,7 +21,7 @@ class UpdatePostForm(forms.ModelForm):
 
 	class Meta:
 		model = Product
-		fields = ['is_draft','name','price','location','category','description','stock_on_hand']
+		fields = ['is_draft','name','price','location','category','description']
 
 
 class ImageFieldForm(forms.Form):
@@ -31,3 +31,10 @@ class ImageFieldForm(forms.Form):
     	model = ProductAlbum
     	fields = ['img_field'] 
 
+
+class StockForm(forms.ModelForm):
+	stock_total = forms.IntegerField(label='Total Stocks Available',widget=forms.TextInput(attrs={'min':'1','type':'number','value':1}))
+	
+	class Meta:
+		model = Stock
+		fields = ['stock_total']
