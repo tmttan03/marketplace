@@ -10,12 +10,14 @@ class Category(models.Model):
 		return self.title
 
 class Product(models.Model):
-	INACTIVE = '0'
-	ACTIVE = '1'
+	DELETED = '0'
+	AVAILABLE = '1'
+	SOLD = '2'
 
 	STATUS_CHOICES = (
-		(INACTIVE, "Inactive"),
-		(ACTIVE, "Active"),
+		(DELETED, "Deleted"),
+		(AVAILABLE, "Available"),
+		(SOLD, "Sold"),
 	)
 
 	name = models.CharField(max_length=100)
@@ -23,11 +25,13 @@ class Product(models.Model):
 	price = models.DecimalField(max_digits=10, decimal_places=2)
 	location = models.CharField(max_length=250, default="Davao")
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
-	author = models.ForeignKey(User, on_delete=models.CASCADE)
+	seller = models.ForeignKey(User, on_delete=models.CASCADE)
+	is_draft = models.BooleanField(default=False)
+	stock_on_hand = models.PositiveIntegerField(default=1)
 	status = models.CharField(
         max_length=2,
         choices=STATUS_CHOICES,
-        default=ACTIVE,
+        default=AVAILABLE,
     )
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
@@ -40,5 +44,4 @@ class ProductAlbum(models.Model):
 	image = models.ImageField(upload_to='product_images/')
 	uploaded_at = models.DateTimeField(auto_now_add=True)
 
-	
-	
+

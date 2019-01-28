@@ -58,31 +58,46 @@
 
 						<h6 style="text-transform: uppercase;font-size: 14px;line-height: 18px;margin-bottom: 0px;font-weight: bold;">Seller information</h6><br>
 						<div class="media">
-						    <img class="rounded-circle detail-account-img" src="{{ product.author.profile.image.url }}">
+						    <img class="rounded-circle detail-account-img" src="{{ product.seller.profile.image.url }}">
 						    <div class="media-body">
-						       <p class="account-heading" >{{ product.author.username }}  </p>
+						       <p class="account-heading" >{{ product.seller.username }}  </p>
 						    </div>
 						</div>
-						
-						{% if user.is_authenticated %}
-							{% if user != product.author %}
-							<hr style="margin-bottom: 10px;margin-top: 5px;">
-								<div class="cart-div">
-									<form id="add-tocart-form" method="POST" action="{% url 'view-post' product.id %}">
-										{% csrf_token %}
-										<fieldset class="form-group">
-										    {{ form| crispy }}
-										</fieldset>
+						<hr style="margin-bottom: 10px;margin-top: 5px;">
 
-										<div class="form-group">
-										    <button id="btn-add-cart" class="btn btn-primary btn-sm btn-block btn-fb" type="submit">Add to Cart</button>
-										</div>
-									</form>	
-								</div>
+						{% if product.stock_on_hand == 0 %}
+							<i><b><p style="color:#c0392b;font-size: 13px">Sorry, we are temporarily out of stock.</p></b></i>
+							<p style="font-size: 12px">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+							<small class="text-muted">
+				                Email notification for out of stock items will be available soon.
+				            </small>
+						{% else %}
+							<i><b><p style="color:#e67e22;font-size: 13px">In stock</p></b></i>
+						{% endif %}
+
+						{% if user.is_authenticated %}
+							{% if user != product.seller %}
+								{% if product.stock_on_hand > 0 %}
+									<div class="cart-div">
+										<form id="add-tocart-form" method="POST" action="{% url 'view-post' product.id %}">
+											{% csrf_token %}
+											<fieldset class="form-group">
+											    {{ form| crispy }}
+											</fieldset>
+
+											<div class="form-group">
+											    <button id="btn-add-cart" class="btn btn-primary btn-sm btn-block btn-fb" type="submit">Add to Cart</button>
+											</div>
+										</form>	
+									</div>
+								{% endif %}
 							{% else %}
-								<hr style="margin-bottom: 10px;margin-top: 5px;"><small class="text-muted">
-			                    	Currently selling this item. Stock management will be available soon. 
-			                	</small>
+								{% if product.stock_on_hand == 0 %}
+									<br><br><button type="button" class="btn btn-fb btn-sm  btn-block">Restock now!</button>
+								{% else %}
+									<p style="font-size: 12px">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+									<br><button type="button" class="btn btn-fb btn-sm  btn-block">Manage Stocks</button>
+								{% endif %}
 							{% endif %}
 						{% else %}
 							 <small class="text-muted">

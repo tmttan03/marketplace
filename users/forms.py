@@ -20,7 +20,6 @@ class UserRegisterForm(UserCreationForm):
 	    return data   
     
 
-
 class UserUpdateForm(forms.ModelForm):
 	email = forms.EmailField()
 	first_name = forms.TextInput()

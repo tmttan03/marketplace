@@ -1,7 +1,6 @@
 {% extends "posts/base.html" %}
 {% block content %}
   {% for product in products %}
-  <!--{% if user == product.author %}-->
     <div class="card" style="padding: 10px">
       <div class="media">
         {% for photo in product.productalbum_set.all %} 
@@ -30,9 +29,6 @@
         </div>
       </div>
     </div><br>
-  <!--{% else %}-->
-      <!--<meta http-equiv="refresh" content="0; url='{% url 'user-products' request.user.id %}'" />-->
-  <!--{% endif %}-->
   {% empty %}
         <center><div class="jumbotron jumbotron-fluid">
           <div class="container">

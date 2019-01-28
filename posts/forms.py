@@ -8,10 +8,9 @@ class PostForm(forms.ModelForm):
 	price = forms.DecimalField(max_digits=10, decimal_places=2, label='', widget=forms.TextInput(attrs={'placeholder':'Price'}))
 	category = forms.ModelChoiceField(Category.objects.all(), label='')
 	location= forms.CharField(label='',widget=forms.TextInput(attrs={'onFocus':'geolocate()','autocomplete':'off', 'placeholder':'Location'}))
-
 	class Meta:
 		model = Product
-		fields = ['name','price','location','category','description']
+		fields = ['is_draft','name','price','location','category','description','stock_on_hand']
 
 class UpdatePostForm(forms.ModelForm):
 	name = forms.CharField(max_length=100, label='', widget=forms.TextInput(attrs={'placeholder':'What are you selling?'}))
@@ -22,7 +21,7 @@ class UpdatePostForm(forms.ModelForm):
 
 	class Meta:
 		model = Product
-		fields = ['name','price','location','category','description']
+		fields = ['is_draft','name','price','location','category','description','stock_on_hand']
 
 
 class ImageFieldForm(forms.Form):
