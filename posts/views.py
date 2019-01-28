@@ -213,7 +213,28 @@ class DetailView(TemplateView):
             return redirect('post-home')        
         return render(self.request, self.template_name, {'form': form})
 
+class ProfileView(TemplateView):
+    """Displays the list of products in the market."""
+    template_name = 'users/profile.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        context['user_name'] = user
+        product = Product.objects.filter(status='1', is_draft=False, seller=user).order_by('created_at')
+        on_sale = product.count()
+        context['on_sale'] = on_sale
+        context['products'] = product
+        context['categories'] = Category.objects.all()
+        context['productalbum'] = ProductAlbum.objects.all()
+        if self.request.user.is_authenticated:
+            trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
+            if trans_no.exists(): 
+                no = Transaction.objects.get(buyer=self.request.user, status='1')
+                context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+            else:
+                context['counter'] = 0
+        return context
     
 
 

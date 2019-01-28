@@ -7,7 +7,8 @@ from .views import (
 	UpdateView, 
 	MessageView, 
 	DeleteView,
-	BoughtProductsListView
+	BoughtProductsListView,
+	ProfileView
 )
 
 urlpatterns = [
@@ -19,4 +20,5 @@ urlpatterns = [
     path('update/<int:product_id>/', UpdateView.as_view(), name='post-update'),
     path('selling/', UserProductsListView.as_view(), name='user-products'),
     path('buying/', BoughtProductsListView.as_view(), name='bought-products'),
+    path('profile/<str:username>/', ProfileView.as_view(), name='profile'),
 ]

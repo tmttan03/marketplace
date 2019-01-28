@@ -1,7 +1,7 @@
 {% extends "posts/base.html" %}
 {% block content %}
-  {% for stock in stocks %}
-      {% for product in products %}
+  {% for product in products %}
+      {% for stock in stocks %}
         {% if stock.product == product %}
             <div class="card" style="padding: 10px">
               <div class="media">
@@ -63,6 +63,7 @@
               </div>
             </div><br>
         {% endif %}
+      {% endfor %}
     {% empty %}
       <center><div class="jumbotron jumbotron-fluid">
         <div class="container">
@@ -71,7 +72,7 @@
         </div>
       </div></center>
   {% endfor %}
-{% endfor %}
+
 
 
 <!--Update Modal-->
