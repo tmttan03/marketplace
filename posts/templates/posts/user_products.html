@@ -1,42 +1,77 @@
 {% extends "posts/base.html" %}
 {% block content %}
-  {% for product in products %}
-    <div class="card" style="padding: 10px">
-      <div class="media">
-        {% for photo in product.productalbum_set.all %} 
-          {% if forloop.counter == 1 %} 
-            <img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/> &nbsp;&nbsp;&nbsp;
-          {% endif %}
-        {% empty %} 
-          <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
-        {% endfor %}   
-        <div class="media-body">
-          <b><p class="mt-0" style="margin-bottom: 5px"> <span style="color: #71a830;">{{ product.price }}</span> - {{ product.name }}  <small>{{ product.created_at | timesince  }} </small> </p></b>
-          <p style="font-size: 13px">{{ product.description }}</p>
+  {% for stock in stocks %}
+      {% for product in products %}
+        {% if stock.product == product %}
+            <div class="card" style="padding: 10px">
+              <div class="media">
+                {% for photo in stock.product.productalbum_set.all %} 
+                  {% if forloop.counter == 1 %} 
+                    <img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/> &nbsp;&nbsp;&nbsp;
+                  {% endif %}
+                {% empty %} 
+                  <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
+                {% endfor %}   
+                <div class="media-body">
+                  <b>
+                    <p class="mt-0" style="margin-bottom: 5px; font-size: 14px">
+                     
+                      {% if stock.product.status == '2' %}
+                         <span style="color: #c0392b;">SOLD</span>
+                      {% else %}
+                          {% if stock.stock_on_hand > 0 %}<span style="color: #71a830;">IN STOCK</span>
+                          {% else %}<span style="color: #c0392b; ">OUT OF STOCK</span> {% endif %}
+                      {% endif %}  
 
-          <div class="btn-group">
-            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Manage
-            </button>
-            <div class="dropdown-menu">
+                      - {{ stock.product.name }}  
 
-              <a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href="{% url 'delete-post' product.id %}"><span class="fas fa-times"></span> Delete</a>
+                      <small>{{ stock.product.created_at | timesince  }} </small> 
 
-              <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' product.id %}"><span class="fas fa-pen"></span> Edit</a>
-            </div>
-          </div>
+                      {% if stock.product.is_draft == True %} <span style="color: #c0392b; font-size: 12px">(DRAFT)</span> {% endif %}
+                    </p>
+                  </b>
 
+                  <p style="font-size: 13px">{{ stock.product.description }}</p>
+
+                  {% if stock.product.status == '2' %}
+                    <button type="button" class="btn btn-fb btn-sm">Mark as Available</button>
+                  {% else %}
+                    {% if stock.product.is_draft == True %}
+                        <button type="button" class="btn btn-fb btn-sm">Publish Draft</button>
+                    {% else %}
+                      {% if stock.stock_on_hand <= 0 %}
+                          <button type="button" class="btn btn-fb btn-sm">Restock Item</button>
+                          <button type="button" class="btn btn-fb btn-sm">Mark as Sold</button>
+                      {% else %}
+                          <button type="button" class="btn btn-fb btn-sm">View Stocks</button>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Manage
+                    </button>
+                    <div class="dropdown-menu">
+                      <a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href="{% url 'delete-post' stock.product.id %}"><span class="fas fa-times"></span> Delete</a>
+
+                      <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' stock.product.id %}"><span class="fas fa-pen"></span> Edit</a>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div><br>
+        {% endif %}
+    {% empty %}
+      <center><div class="jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="display-4">No Products Yet</h1>
+          <p class="lead">Start by Creating Your First Product. </p>
         </div>
-      </div>
-    </div><br>
-  {% empty %}
-        <center><div class="jumbotron jumbotron-fluid">
-          <div class="container">
-            <h1 class="display-4">No Products Yet</h1>
-            <p class="lead">Start by Creating Your First Product. </p>
-          </div>
-        </div></center>
+      </div></center>
   {% endfor %}
+{% endfor %}
 
 
 <!--Update Modal-->

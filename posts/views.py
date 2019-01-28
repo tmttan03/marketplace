@@ -40,7 +40,11 @@ class UserProductsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(UserProductsListView, self).get_context_data(**kwargs)
         user = self.request.user
-        context['products'] = Product.objects.filter(seller=user,status='1').order_by('-created_at')
+        context['products'] = Product.objects.filter(seller=user).exclude(status='0').order_by('-created_at')
+        context['stocks']  = Stock.objects.filter(status='1')
+
+        #import pdb; pdb.set_trace()
+
         #if self.request.user.is_authenticated:
         trans_no = Transaction.objects.filter(buyer=user, status='1')
         if trans_no.exists(): 
@@ -146,7 +150,7 @@ class DeleteView(LoginRequiredMixin, TemplateView):
             messages.success(self.request, f'Item Deleted')
         else:
             messages.error(self.request, f'Product Does not Exist')
-        return redirect('user-products', self.request.user.id)
+        return redirect('user-products')
 
 
 class UpdateView(LoginRequiredMixin, TemplateView):
