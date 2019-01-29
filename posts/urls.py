@@ -9,7 +9,11 @@ from .views import (
 	DeleteView,
 	BoughtProductsListView,
 	ProfileView,
-	AddToFavorites
+	AddToFavorites,
+	PublishDraftView,
+	MarkAvailableView,
+	MarkSoldView,
+	RestockView
 )
 from . import views
 
@@ -18,6 +22,10 @@ urlpatterns = [
     path('create/', PostView.as_view(), name='post-create'),
     path('item/<int:product_id>/', DetailView.as_view(), name='view-post'),
     path('delete/<int:product_id>/', DeleteView.as_view(), name='delete-post'),
+    path('publish/<int:product_id>/', PublishDraftView.as_view(), name='publish-draft'),
+    path('available/<int:product_id>/', MarkAvailableView.as_view(), name='mark-available'),
+    path('sold/<int:product_id>/', MarkSoldView.as_view(), name='mark-sold'),
+    path('restock/<int:product_id>/', RestockView.as_view(), name='restock'),
     path('message/', MessageView.as_view(), name='message'),
     path('update/<int:product_id>/', UpdateView.as_view(), name='post-update'),
     path('selling/', UserProductsListView.as_view(), name='user-products'),

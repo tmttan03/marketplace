@@ -34,16 +34,18 @@
                   <p style="font-size: 13px">{{ stock.product.description }}</p>
 
                   {% if stock.product.status == '2' %}
-                    <button type="button" class="btn btn-fb btn-sm">Mark as Available</button>
+                      <a class="btn btn-fb btn-sm" id="mark-available-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#availableModal" href="{% url 'mark-available' stock.product.id %}">Mark as Available</a>
                   {% else %}
                     {% if stock.product.is_draft == True %}
-                        <button type="button" class="btn btn-fb btn-sm">Publish Draft</button>
+                        <a class="btn btn-fb btn-sm" id="publish-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#publishModal" href="{% url 'publish-draft' stock.product.id %}">Publish Draft</a>
                     {% else %}
                       {% if stock.stock_on_hand <= 0 %}
-                          <button type="button" class="btn btn-fb btn-sm">Restock Item</button>
-                          <button type="button" class="btn btn-fb btn-sm">Mark as Sold</button>
+                      
+                          <a class="btn btn-fb btn-sm" id="restock-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#restockModal" href="{% url 'restock' stock.product.id %}">Restock Item</a>
+
+                          <a class="btn btn-fb btn-sm" id="mark-sold-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#soldModal" href="{% url 'mark-sold' stock.product.id %}">Mark as Sold</a>
                       {% else %}
-                          <button type="button" class="btn btn-fb btn-sm">View Stocks</button> 
+                          <a href="{% url 'market-product' product.id%}" class="btn btn-fb btn-sm">View Buyers</a> 
                       {% endif %}
                     {% endif %}
                   {% endif %}
@@ -80,5 +82,17 @@
 
 <!--Warning Delete Modal-->
 {% include "posts/includes/delete-modal.html" %}
+
+<!--Warning Publish Modal-->
+{% include "posts/selling-page/publish-modal.html" %}
+
+<!--Warning Available Modal-->
+{% include "posts/selling-page/make-available-modal.html" %}
+
+<!--Warning Sold Modal-->
+{% include "posts/selling-page/sold-modal.html" %}
+
+<!--Restock Modal-->
+{% include "posts/selling-page/restock-modal-template.html" %}
 
 {% endblock content %}

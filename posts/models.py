@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.urls import reverse 
 from PIL import Image
 
-
 class Category(models.Model):
 	title = models.CharField(max_length=100)
 

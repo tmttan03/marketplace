@@ -40,7 +40,7 @@ class UserProductsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(UserProductsListView, self).get_context_data(**kwargs)
         user = self.request.user
-        context['products'] = Product.objects.filter(seller=user).exclude(status='0').order_by('-created_at')
+        context['products'] = Product.objects.filter(seller=user).exclude(status='0').order_by('created_at')
         context['stocks']  = Stock.objects.filter(status='1')
 
         #import pdb; pdb.set_trace()
@@ -112,7 +112,7 @@ class PostView(LoginRequiredMixin, TemplateView):
         form = self.form(self.request.POST)
         s_form = self.s_form(self.request.POST)
         #i_form = self.i_form(self.request.POST,self.request.FILES)
-        if form.is_valid():
+        if form.is_valid() and s_form.is_valid():
             product = form.save(commit=False)
             product.seller = self.request.user
             product.save()
@@ -127,7 +127,7 @@ class PostView(LoginRequiredMixin, TemplateView):
             #import pdb; pdb.set_trace()
             messages.success(self.request, f'Successfully Added a New Item')
             return redirect('message')        
-        return render(self.request, self.template_name,{'form': form, 'i_form': i_form})
+        return render(self.request, self.template_name,{'form': form, 's_form': s_form})
 
 
 class MessageView(TemplateView):
@@ -267,6 +267,98 @@ def AddToFavorites(request, product_id):
     return redirect('login')
 
     
+class PublishDraftView(LoginRequiredMixin, TemplateView):
+    """Publish a Draft."""
+    model = Product
+    template_name = 'posts/selling-page/warning-publish.html'
+
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            product = get_object_or_404(Product, id=self.kwargs.get('product_id'), seller=self.request.user)
+            return render(self.request, self.template_name, {'product': product})
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        product = Product.objects.filter(id=self.kwargs.get('product_id'), seller=self.request.user)
+        if product.exists():
+            product.update(is_draft=False)
+            messages.success(self.request, f'Published Post')
+        else:
+            messages.error(self.request, f'Product Does not Exist')
+        return redirect('user-products')
+
+
+class MarkAvailableView(LoginRequiredMixin, TemplateView):
+    """Publish a Draft."""
+    model = Product
+    template_name = 'posts/selling-page/warning-available.html'
+
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            product = get_object_or_404(Product, id=self.kwargs.get('product_id'), seller=self.request.user)
+            return render(self.request, self.template_name, {'product': product})
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        product = Product.objects.filter(id=self.kwargs.get('product_id'), seller=self.request.user)
+        if product.exists():
+            product.update(status='1')
+            messages.success(self.request, f'Renewed Post')
+        else:
+            messages.error(self.request, f'Product Does not Exist')
+        return redirect('user-products')
+
+
+class MarkSoldView(LoginRequiredMixin, TemplateView):
+    """Publish a Draft."""
+    model = Product
+    template_name = 'posts/selling-page/warning-sold.html'
+
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            product = get_object_or_404(Product, id=self.kwargs.get('product_id'), seller=self.request.user)
+            return render(self.request, self.template_name, {'product': product})
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        product = Product.objects.filter(id=self.kwargs.get('product_id'), seller=self.request.user)
+        if product.exists():
+            product.update(status='2')
+            #messages.success(self.request, f'')
+        else:
+            messages.error(self.request, f'Product Does not Exist')
+        return redirect('user-products')
+
+
+class RestockView(LoginRequiredMixin, TemplateView):
+    """Restock Item."""
+    s_form = StockForm
+    template_name = 'posts/selling-page/restock-modal.html'
+
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            product = get_object_or_404(Product, id=self.kwargs.get('product_id'), seller=self.request.user)
+            s_form = self.s_form()
+            return render(self.request, self.template_name, {'product': product, 's_form' : s_form})
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        s_form = self.s_form(self.request.POST)
+        product = Product.objects.get(id=self.kwargs.get('product_id'))
+        stocks = Stock.objects.filter(product_id=self.kwargs.get('product_id'),status='1',stock_on_hand=0)
+        if stocks.exists():
+            if s_form.is_valid():
+                stocks.update(status='2')
+                stock = s_form.save(commit=False)
+                stock.stock_no = "Stock#" +  str(datetime.datetime.now())
+                stock.product = product
+                stock.stock_on_hand = s_form.cleaned_data.get('stock_total')
+                stock.save()
+                messages.success(self.request, f'Successfully restocked item')
+                return redirect('message')        
+            return render(self.request, self.template_name,{'s_form': s_form})
+        raise Http404
 
 
 
+    
