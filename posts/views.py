@@ -70,6 +70,16 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
         context['transactions'] = Transaction.objects.filter(buyer=user, status='0')
         context['orders'] = Order.objects.filter(status='1').all()
         
+        counter = 0
+        context['current_count'] =  {}
+        for transaction in transactions:
+            for order in orders:
+                if transaction == order.transaction:
+                    counter = counter + 1
+                    context['current_count'] = counter
+                    
+
+        
         #if self.request.user.is_authenticated:
         trans_no = Transaction.objects.filter(buyer=user, status='1')
             #if self.kwargs.get('user_id') == self.request.user.id:

@@ -1,0 +1,62 @@
+{% extends "posts/base.html" %}
+{% load mathfilters %}
+{% block content %}
+<h1> View Market </h1><br>
+<div class="card" style="padding: 10px">
+    <table class="table" id="shop-cart">
+      <thead class="titlerow">
+        <th>#</th>
+        <th>Buyer</th>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Sub-Total</th>
+        <th>Status</th>
+      </thead>
+    <tbody>
+{% for order in orders %}
+  {% if order.product.seller == user %}
+    <tr class="rowDataSd">
+      <td>{{ order.transaction.no }}</td>
+      <td>{{ order.transaction.buyer.first_name }} {{ order.transaction.buyer.last_name }}</td>
+      <td>{{ order.product.name }} <br> <small>{{ order.reference_no }}</small><br><br><i> Comments:{{ order.comment }}</i> </td>
+      <td>{{ order.qty }}</td> 
+      <td class="rowDataSd">{{ order.product.price|mul:order.qty }}</td>
+      
+      {% if order.transaction.status == '0' %}
+        <td>Sold</td>
+      {% else  %}
+        <td>Pending</td>
+      {% endif %} 
+
+    {% endif %}   
+{% empty %} 
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><center><h6 >No buyers yet! </h6></center></td>
+        <td></td>
+      </tr>
+{% endfor %}
+      <tr class="totalColumn">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="totalCol">Total: </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<br>
+
+
+<!--Update Modal-->
+{% include "transactions/includes/update-cart-modal-template.html" %}
+
+<!--Warning Delete Modal-->
+{% include "transactions/includes/delete-item-modal.html" %}
+
+{% endblock content %}

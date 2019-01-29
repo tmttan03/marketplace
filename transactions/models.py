@@ -51,6 +51,7 @@ class Payment(models.Model):
 	transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 	amount_due = models.DecimalField(max_digits=10, decimal_places=2)
 	purchased_date = models.DateTimeField(auto_now=True)
+	
 
 	def __str__(self):
 		return self.no
