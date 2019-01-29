@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 
 from .forms import PostForm, UpdatePostForm, ImageFieldForm, StockForm
-from .models import Product , Category, ProductAlbum, Stock
+from .models import Product , Category, ProductAlbum, Stock, Favorite
 
 from transactions.models import Transaction, Payment, Order
 from transactions.forms import ToCartForm
@@ -55,7 +55,6 @@ class UserProductsListView(LoginRequiredMixin, TemplateView):
             context['counter'] = 0
             return context
            
-
 
 class BoughtProductsListView(LoginRequiredMixin, TemplateView):
     """Displays the list of products the user purchased."""
@@ -200,6 +199,13 @@ class DetailView(TemplateView):
             except Stock.DoesNotExist:
                 context['stock'] = {'stock_on_hand': 0}
 
+            if self.request.user.is_authenticated:
+                try:
+                    favorites = Favorite.objects.get(product=self.kwargs.get('product_id'), user=self.request.user)
+                    context['is_favorite'] = favorites
+                except Favorite.DoesNotExist:
+                    context['is_favorite'] = {'is_favorite': False}
+
             #import pdb; pdb.set_trace()
             return render(self.request, self.template_name, context)
         raise Http404
@@ -223,6 +229,7 @@ class DetailView(TemplateView):
             return redirect('post-home')        
         return render(self.request, self.template_name, {'form': form})
 
+
 class ProfileView(TemplateView):
     """Displays the list of products in the market."""
     template_name = 'users/profile.html'
@@ -237,6 +244,7 @@ class ProfileView(TemplateView):
         context['products'] = product
         context['categories'] = Category.objects.all()
         context['productalbum'] = ProductAlbum.objects.all()
+        context['favorites'] = Favorite.objects.filter(user=self.request.user)
         if self.request.user.is_authenticated:
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 
@@ -245,6 +253,19 @@ class ProfileView(TemplateView):
             else:
                 context['counter'] = 0
         return context
+
+
+def AddToFavorites(request, product_id):
+    """Add to Favorites a Product"""
+    if request.user.is_authenticated:
+        product = get_object_or_404(Product, id=product_id)
+        no = "Fav" +  str(datetime.datetime.now())
+        favorite = Favorite(product=product, user=request.user, favorite_no=no)
+        favorite.save()
+        messages.success(request, f'Added to My Favorites')
+        return redirect('post-home')
+    return redirect('login')
+
     
 
 

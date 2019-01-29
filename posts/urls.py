@@ -8,8 +8,10 @@ from .views import (
 	MessageView, 
 	DeleteView,
 	BoughtProductsListView,
-	ProfileView
+	ProfileView,
+	AddToFavorites
 )
+from . import views
 
 urlpatterns = [
     path('', PostListView.as_view(), name='post-home'),
@@ -21,4 +23,5 @@ urlpatterns = [
     path('selling/', UserProductsListView.as_view(), name='user-products'),
     path('buying/', BoughtProductsListView.as_view(), name='bought-products'),
     path('profile/<str:username>/', ProfileView.as_view(), name='profile'),
+    path('favorite/<int:product_id>/', views.AddToFavorites, name='favorite'),
 ]

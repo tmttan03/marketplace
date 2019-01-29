@@ -149,7 +149,7 @@ class PaymentView(LoginRequiredMixin, TemplateView):
 
             
 class MarketListView(LoginRequiredMixin, TemplateView):
-    """Displays the unpaid orders of the user"""
+    """Displays the summary of the list of buyers of all the user's products"""
     template_name = 'transactions/market.html'
 
     def get_context_data(self, **kwargs):
@@ -167,7 +167,7 @@ class MarketListView(LoginRequiredMixin, TemplateView):
             return context            
            
 class ProductMarketView(LoginRequiredMixin, TemplateView):
-    """Displays the unpaid orders of the user"""
+    """Displays the list of buyers per product"""
     template_name = 'transactions/product-market.html'
 
     def get_context_data(self, **kwargs):
@@ -179,6 +179,12 @@ class ProductMarketView(LoginRequiredMixin, TemplateView):
                 context['orders'] = Order.objects.filter(status='1', product=self.kwargs.get('product_id'))
             else:
                 raise Http404
+                
+            try:
+                stock = Stock.objects.get(status='1',product=self.kwargs.get('product_id'))
+                context['stock'] = stock
+            except Stock.DoesNotExist:
+                context['stock'] = {'stock_on_hand': 0}
             
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 

@@ -21,7 +21,7 @@ class UpdatePostForm(forms.ModelForm):
 
 	class Meta:
 		model = Product
-		fields = ['is_draft','name','price','location','category','description']
+		fields = ['name','price','location','category','description']
 
 
 class ImageFieldForm(forms.Form):

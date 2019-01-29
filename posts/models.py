@@ -3,11 +3,13 @@ from django.contrib.auth.models import User
 from django.urls import reverse 
 from PIL import Image
 
+
 class Category(models.Model):
 	title = models.CharField(max_length=100)
 
 	def __str__(self):
 		return self.title
+
 
 class Product(models.Model):
 	DELETED = '0'
@@ -38,6 +40,7 @@ class Product(models.Model):
 
 	def __str__(self):
 		return self.name
+
 
 class ProductAlbum(models.Model):
 	product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -70,3 +73,14 @@ class Stock(models.Model):
 
 	def __str__(self):
 		return self.stock_no
+
+
+class Favorite(models.Model):
+	favorite_no = models.CharField(max_length=100)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	product = models.ForeignKey(Product, on_delete=models.CASCADE)
+	is_favorite = models.BooleanField(default=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.favorite_no

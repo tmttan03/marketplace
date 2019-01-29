@@ -63,7 +63,41 @@
         {%  endfor %}
 
       </div>
-      <div class="tab-pane fade" id="fav" role="tabpanel" aria-labelledby="fav-tab">...</div>
+      <div class="tab-pane fade" id="fav" role="tabpanel" aria-labelledby="fav-tab">
+        {%  for favorite in favorites  %}
+            {% if forloop.counter0|divisibleby:4 %} <div class="row text-center"> {%  endif %}
+              <div class="col-xl-3">
+                  <a href="{% url 'view-post' favorite.product.id %}" id="detail-card" data-toggle="modal" data-target="#detailModal" class="link-card" data-toggle="tooltip" data-placement="bottom" title="{{ favorite.product.name }}"> 
+                    <div class="card">
+                    {% for photo in favorite.product.productalbum_set.all %} 
+                        {% if forloop.counter == 1 %} 
+                            <img class="img-fluid" src="{{ photo.image.url }}" width="255" height="245" /> 
+                        {% endif %}
+                    {% empty %}
+                      <img class="img-fluid" src="http://placehold.it/245" alt=""/> 
+                    {% endfor %}
+                      <span class="badge badge-dark" id="price-badge">{{ favorite.product.price }}</span>
+
+                      <div class="card-content" id="product-details">
+                          <hr>
+                           <b><p>{{ favorite.product.name }} </p></b>
+                           <small>{{ favorite.product.location }} {{ favorite.product.created_at | timesince }}</small>
+                          <br>
+                      </div><!-- card content -->
+                  </div><!-- card -->
+                </a><!-- link -->
+              </div><!-- col-xl-4 -->
+        {%  if forloop.counter|divisibleby:4 or forloop.last %}</div><br><!-- row closing -->{%  endif %}
+        {% empty %}
+            <center><div class="jumbotron jumbotron-fluid">
+              <div class="container">
+                <h1 class="display-4">No Products Yet</h1>
+                <p class="lead">Start by Creating Your First Product. </p>
+              </div>
+            </div></center>
+        {%  endfor %}
+
+      </div>
     </div>
 
    
