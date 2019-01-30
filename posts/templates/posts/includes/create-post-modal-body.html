@@ -56,10 +56,10 @@
 						{% if user.is_authenticated %}
 							{% if user != product.seller %}	
 								{% if is_favorite.is_favorite == False %}
-									<a href="{% url 'favorite' product.id %}"><i class="far fa-star"></i></a> 
+									<a href="{% url 'favorite' product.id %}"><i class="far fa-star"></i></a>  
 								{% else %}
 									<a href="{% url 'unfavorite' product.id %}"><i class="fas fa-star"></i></a> 
-								{% endif %}	
+								{% endif %}	  
 							{% endif %}
 						{% endif %}	
 
