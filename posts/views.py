@@ -40,9 +40,9 @@ class UserProductsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(UserProductsListView, self).get_context_data(**kwargs)
         user = self.request.user
-        context['products'] = Product.objects.filter(seller=user).exclude(status='0').order_by('created_at')
+        context['products'] = Product.objects.filter(seller=user, status='1').order_by('created_at')
+        context['sold_products'] = Product.objects.filter(seller=user, status='2').order_by('created_at')
         context['stocks']  = Stock.objects.filter(status='1')
-
         #import pdb; pdb.set_trace()
 
         #if self.request.user.is_authenticated:
@@ -76,8 +76,6 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
                 if transaction == order.transaction:
                     counter = counter + 1
                     context['current_count'] = counter
-                    
-
         
         #if self.request.user.is_authenticated:
         trans_no = Transaction.objects.filter(buyer=user, status='1')
@@ -244,7 +242,7 @@ class ProfileView(TemplateView):
         context['products'] = product
         context['categories'] = Category.objects.all()
         context['productalbum'] = ProductAlbum.objects.all()
-        context['favorites'] = Favorite.objects.filter(user=self.request.user)
+        context['favorites'] = Favorite.objects.filter(user=user)
         if self.request.user.is_authenticated:
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 
@@ -355,7 +353,7 @@ class RestockView(LoginRequiredMixin, TemplateView):
                 stock.stock_on_hand = s_form.cleaned_data.get('stock_total')
                 stock.save()
                 messages.success(self.request, f'Successfully restocked item')
-                return redirect('message')        
+                return redirect('user-products')        
             return render(self.request, self.template_name,{'s_form': s_form})
         raise Http404
 
