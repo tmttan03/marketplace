@@ -242,7 +242,7 @@ class ProfileView(TemplateView):
         context['products'] = product
         context['categories'] = Category.objects.all()
         context['productalbum'] = ProductAlbum.objects.all()
-        context['favorites'] = Favorite.objects.filter(user=user)
+        context['favorites'] = Favorite.objects.filter(user=user,is_favorite=True)
         if self.request.user.is_authenticated:
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 
@@ -257,11 +257,26 @@ def AddToFavorites(request, product_id):
     """Add to Favorites a Product"""
     if request.user.is_authenticated:
         product = get_object_or_404(Product, id=product_id)
-        no = "Fav" +  str(datetime.datetime.now())
-        favorite = Favorite(product=product, user=request.user, favorite_no=no)
-        favorite.save()
+        favorite = Favorite.objects.filter(product=product, user=request.user)
+        if favorite.exists():
+            favorite.update(is_favorite=True)
+        else:
+            no = "Fav" +  str(datetime.datetime.now())
+            favorite = Favorite(product=product, user=request.user, favorite_no=no)
+            favorite.save()
         messages.success(request, f'Added to My Favorites')
-        return redirect('post-home')
+
+        return redirect('/')
+    return redirect('login')
+
+
+def RemoveFromFavorites(request, product_id):
+    """Remove from Favorites a Product"""
+    if request.user.is_authenticated:
+        favorite = Favorite.objects.filter(product=product_id, user=request.user)
+        favorite.update(is_favorite=False)
+        messages.success(request, f'Removed from My Favorites')
+        return redirect('/')
     return redirect('login')
 
     

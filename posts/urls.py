@@ -9,11 +9,12 @@ from .views import (
 	DeleteView,
 	BoughtProductsListView,
 	ProfileView,
-	AddToFavorites,
 	PublishDraftView,
 	MarkAvailableView,
 	MarkSoldView,
-	RestockView
+	RestockView,
+	AddToFavorites,
+	RemoveFromFavorites,
 )
 from . import views
 
@@ -32,4 +33,5 @@ urlpatterns = [
     path('buying/', BoughtProductsListView.as_view(), name='bought-products'),
     path('profile/<str:username>/', ProfileView.as_view(), name='profile'),
     path('favorite/<int:product_id>/', views.AddToFavorites, name='favorite'),
+    path('unfavorite/<int:product_id>/', views.RemoveFromFavorites, name='unfavorite'),
 ]

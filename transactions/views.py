@@ -139,10 +139,11 @@ class PaymentView(LoginRequiredMixin, TemplateView):
             payment_no = "Payment" +  str(datetime.datetime.now())
             amount = round(float(self.request.POST['grndtotal1'])*100)
             token = self.request.POST['stripeToken']
+            email = self.request.user.email
             description = "Payment for " + no.no +" " + user.first_name + " " + user.last_name
-            #payment = Payment(no=payment_no, transaction=no, amount_due=amount)
-            #payment.save()
-            #trans_no.update(status='0')
+            payment = Payment(no=payment_no, transaction=no, amount_due=amount)
+            payment.save()
+            trans_no.update(status='0')
             try:
                 customer = stripe.Customer.retrieve(customer_id)
                 customer.sources.create(source=token)
@@ -151,7 +152,8 @@ class PaymentView(LoginRequiredMixin, TemplateView):
                     amount=amount,
                     currency='usd',
                     customer=customer,
-                    description=description
+                    description=description,
+                    receipt_email=email,
                 )
             except stripe.error.CardError as e:
                 #The card has been declined
