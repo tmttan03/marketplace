@@ -92,10 +92,10 @@
 							{% if user != product.seller %}
 								{% if stock.stock_on_hand > 0 %}
 									<div class="cart-div">
-										<form id="add-tocart-form" method="POST" action="{% url 'view-post' product.id %}" >
+										<form id="add-tocart-form" action="{% url 'view-post' product.id %}" method="POST">
 											{% csrf_token %}
 											<fieldset class="form-group" style="margin-bottom: 0px;">
-											    {{ form| crispy }}
+											    {{ form|crispy }}
 											</fieldset>
 
 											<div class="form-group">

@@ -6,8 +6,8 @@ from .models import Profile
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
-    first_name = forms.TextInput()
-    last_name = forms.TextInput()
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'required':'True'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'required':'True'}))
 
     class Meta:
         model = User
@@ -21,9 +21,8 @@ class UserRegisterForm(UserCreationForm):
     
 
 class UserUpdateForm(forms.ModelForm):
-	email = forms.EmailField()
-	first_name = forms.TextInput()
-	last_name = forms.TextInput()
+	first_name = forms.CharField(widget=forms.TextInput(attrs={'required':'True'}))
+	last_name = forms.CharField(widget=forms.TextInput(attrs={'required':'True'}))
 
 	class Meta:
 		model = User

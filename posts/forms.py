@@ -1,6 +1,7 @@
 from django import forms
 from .models import Product, Category, ProductAlbum, Stock
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 class PostForm(forms.ModelForm):
 	name = forms.CharField(max_length=100, label='', widget=forms.TextInput(attrs={'placeholder':'What are you selling?'}))
@@ -38,5 +39,9 @@ class StockForm(forms.ModelForm):
 	class Meta:
 		model = Stock
 		fields = ['stock_total']
+
+	def clean(self):
+		if self.cleaned_data.get('stock_total') == '':
+			raise ValidationError('Empty code not allowed')
 
 		

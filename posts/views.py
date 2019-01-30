@@ -53,7 +53,7 @@ class UserProductsListView(LoginRequiredMixin, TemplateView):
             return context
         else:
             context['counter'] = 0
-            return context
+            return context  
            
 
 class BoughtProductsListView(LoginRequiredMixin, TemplateView):
@@ -64,18 +64,13 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
         context = super(BoughtProductsListView, self).get_context_data(**kwargs)
         user = self.request.user
         #Trans = Transaction.objects.filter(buyer=user, status='0') 
-        transactions = Transaction.objects.filter(buyer=user, status='0')
-        orders = Order.objects.all()
-        context['transactions'] = Transaction.objects.filter(buyer=user, status='0')
-        context['orders'] = Order.objects.filter(status='1').all()
-        
-        counter = 0
-        context['current_count'] =  {}
-        for transaction in transactions:
-            for order in orders:
-                if transaction == order.transaction:
-                    counter = counter + 1
-                    context['current_count'] = counter
+        transaction_ids = Transaction.objects.filter(buyer=user, status='0').values_list('id', flat=True)
+        orders = Order.objects.filter(transaction__id__in=transaction_ids)
+        products = [order.product for order in orders]
+        context['products'] = products
+
+        #context['transactions'] = Transaction.objects.filter(buyer=user, status='0')
+        #context['orders'] = Order.objects.filter(status='1').all()
         
         #if self.request.user.is_authenticated:
         trans_no = Transaction.objects.filter(buyer=user, status='1')
@@ -347,8 +342,8 @@ class MarkSoldView(LoginRequiredMixin, TemplateView):
 
 class RestockView(LoginRequiredMixin, TemplateView):
     """Restock Item."""
-    s_form = StockForm
     template_name = 'posts/selling-page/restock-modal.html'
+    s_form = StockForm
 
     def get(self,*args,**kwargs):
         if self.request.is_ajax():
@@ -360,20 +355,21 @@ class RestockView(LoginRequiredMixin, TemplateView):
     def post(self,*args,**kwargs):
         s_form = self.s_form(self.request.POST)
         product = Product.objects.get(id=self.kwargs.get('product_id'))
-        stocks = Stock.objects.filter(product_id=self.kwargs.get('product_id'),status='1',stock_on_hand=0)
-        if stocks.exists():
-            if s_form.is_valid():
+        stocks = Stock.objects.filter(product=product,status='1',stock_on_hand=0)
+        if s_form.is_valid():
+            if stocks.exists():
                 stocks.update(status='2')
-                stock = s_form.save(commit=False)
-                stock.stock_no = "Stock#" +  str(datetime.datetime.now())
-                stock.product = product
-                stock.stock_on_hand = s_form.cleaned_data.get('stock_total')
-                stock.save()
-                messages.success(self.request, f'Successfully restocked item')
-                return redirect('user-products')        
-            return render(self.request, self.template_name,{'s_form': s_form})
-        raise Http404
+            stock = s_form.save(commit=False)
+            stock.stock_no = "Stock#" +  str(datetime.datetime.now())
+            stock.product = product
+            stock.stock_on_hand = s_form.cleaned_data.get('stock_total')
+            stock.save()
+            messages.success(self.request, f'Successfully restocked item')
+            return redirect('user-products')
+        return render(self.request, self.template_name,{'s_form': s_form}) 
+              
 
 
+        
 
-    
+

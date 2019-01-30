@@ -3,7 +3,7 @@
   <form id="UpdateCartForm" method="POST" action="" novalidate>
     {% csrf_token %}
     <fieldset class="form-group" enctype="multipart/form-data">
-        {{ form| crispy }}
+        {{ form|crispy }}
     </fieldset>
     <div class="form-group">
         <button id="btn-update" class="btn btn-fb btn-sm" type="submit">Update Cart</button>

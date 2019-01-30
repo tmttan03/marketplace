@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 <div class="card">
-  <form id="restock-form" method="POST" action="{% url 'restock' product.id %}" novalidate enctype="multipart/form-data">
+  <form id="restock-form" action="{% url 'restock' product.id %}"  method="POST">
     {% csrf_token %}
     <fieldset class="form-group">
         {{ s_form|crispy }}

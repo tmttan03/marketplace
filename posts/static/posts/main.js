@@ -280,6 +280,7 @@ $("a[id='restock-btn']").click(function() {
           success: function(response){
             console.log(response);
             $('#restockModal').attr('data-url', link);
+            $('#restock-form').attr('novalidate', 'novalidate');
             $('#restock-body').html(response);
           }
      })
@@ -310,3 +311,5 @@ $("a[id='restock-btn']").click(function() {
 $('#restock-form').on('hide.bs.modal', function (e) {
     location.reload();
 });
+
+
