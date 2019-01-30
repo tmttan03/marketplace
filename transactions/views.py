@@ -124,6 +124,7 @@ class PaymentView(LoginRequiredMixin, TemplateView):
         user = self.request.user
         trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
         stocks = Stock.objects.filter(status='1')
+        customer_id = self.request.user.userstripe.stripe_id
         if trans_no.exists(): 
             no = Transaction.objects.get(buyer=user, status='1')
             orders = Order.objects.filter(transaction=no,status='1')
@@ -139,16 +140,22 @@ class PaymentView(LoginRequiredMixin, TemplateView):
             amount = round(float(self.request.POST['grndtotal1'])*100)
             token = self.request.POST['stripeToken']
             description = "Payment for " + no.no +" " + user.first_name + " " + user.last_name
-            name = user.first_name + " "+ user.last_name
-            payment = Payment(no=payment_no, transaction=no, amount_due=amount)
-            payment.save()
-            trans_no.update(status='0')
-            charge = stripe.Charge.create(
-                amount=amount,
-                currency='usd',
-                description=description,
-                source=token,
-            )
+            #payment = Payment(no=payment_no, transaction=no, amount_due=amount)
+            #payment.save()
+            #trans_no.update(status='0')
+            try:
+                customer = stripe.Customer.retrieve(customer_id)
+                customer.sources.create(source=token)
+                
+                charge = stripe.Charge.create(
+                    amount=amount,
+                    currency='usd',
+                    customer=customer,
+                    description=description
+                )
+            except stripe.error.CardError as e:
+                #The card has been declined
+                pass
             messages.success(self.request, f'Succesfully purchased the item/s')
             return redirect('cart')
         else:
