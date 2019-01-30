@@ -123,8 +123,18 @@ class PaymentView(LoginRequiredMixin, TemplateView):
         context = super(PaymentView, self).get_context_data(**kwargs)
         user = self.request.user
         trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
+        stocks = Stock.objects.filter(status='1')
         if trans_no.exists(): 
             no = Transaction.objects.get(buyer=user, status='1')
+            orders = Order.objects.filter(transaction=no,status='1')
+
+            for order in orders:
+                for stock in stocks:
+                    if order.product == stock.product:
+                        items_dif = stock.stock_on_hand - order.qty
+                        #stock.stock_on_hand = items_dif
+                        stocks.filter(product=order.product).update(stock_on_hand=items_dif)
+
             payment_no = "Payment" +  str(datetime.datetime.now())
             amount = round(float(self.request.POST['grndtotal1'])*100)
             token = self.request.POST['stripeToken']
@@ -138,7 +148,6 @@ class PaymentView(LoginRequiredMixin, TemplateView):
                 currency='usd',
                 description=description,
                 source=token,
-                #customer=name,
             )
             messages.success(self.request, f'Succesfully purchased the item/s')
             return redirect('cart')

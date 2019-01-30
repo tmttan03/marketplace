@@ -86,16 +86,16 @@
 				                Email notification for out of stock items will be available soon.
 				            </small>
 						{% else %}
-							<i><b><p style="color:#e67e22;font-size: 13px">In stock ({{stock.stock_on_hand }}/{{stock.stock_total}})</p></b></i>
+							<i><b><p style="color:#e67e22;font-size: 13px;margin-bottom: 0px;">In stock ({{stock.stock_on_hand }}/{{stock.stock_total}})</p></b></i>
 						{% endif %}
 
 						{% if user.is_authenticated %}
 							{% if user != product.seller %}
 								{% if stock.stock_on_hand > 0 %}
 									<div class="cart-div">
-										<form id="add-tocart-form" method="POST" action="{% url 'view-post' product.id %}">
+										<form id="add-tocart-form" method="POST" action="{% url 'view-post' product.id %}" >
 											{% csrf_token %}
-											<fieldset class="form-group">
+											<fieldset class="form-group" style="margin-bottom: 0px;">
 											    {{ form| crispy }}
 											</fieldset>
 
