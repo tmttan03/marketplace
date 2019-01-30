@@ -255,6 +255,7 @@ class ProfileView(TemplateView):
 
 def AddToFavorites(request, product_id):
     """Add to Favorites a Product"""
+    path = request.META.get('HTTP_REFERER')
     if request.user.is_authenticated:
         product = get_object_or_404(Product, id=product_id)
         favorite = Favorite.objects.filter(product=product, user=request.user)
@@ -266,17 +267,18 @@ def AddToFavorites(request, product_id):
             favorite.save()
         messages.success(request, f'Added to My Favorites')
 
-        return redirect('/')
+        return redirect(path)
     return redirect('login')
 
 
 def RemoveFromFavorites(request, product_id):
     """Remove from Favorites a Product"""
+    path = request.META.get('HTTP_REFERER')
     if request.user.is_authenticated:
         favorite = Favorite.objects.filter(product=product_id, user=request.user)
         favorite.update(is_favorite=False)
         messages.success(request, f'Removed from My Favorites')
-        return redirect('/')
+        return redirect(path)
     return redirect('login')
 
     
