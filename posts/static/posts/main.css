@@ -97,7 +97,7 @@ a:hover{
 
 #btn-update{
   float: right;
-  margin-top: 10px;
+  margin: 10px;
 }
 
 
@@ -110,13 +110,15 @@ a:hover{
   padding: 5;
 }
 
-#id_name, #id_price, #id_location, #id_category, #id_qty{
+#id_name, #id_price, #id_location, #id_category, #id_qty, #id_stock_total{
   border: none;
   border-bottom: 1px solid #ccd4da;
+  font-size: 14px;
 }
 
 #id_description, #id_comment{
   border: none;
+  font-size: 14px;
 }
 
 #id_category select {
@@ -125,6 +127,17 @@ a:hover{
   /* for Chrome */
   -webkit-appearance: none;
   font-size: 14px!important;
+}
+
+label.col-form-label.requiredField, label.form-check-label {
+    font-size: 14px;
+    margin-left: 10px;
+    color: #848484;
+}
+
+div#div_id_is_draft {
+    float: right;
+    margin-right: 10px;
 }
 
 /* For IE10 */
@@ -201,3 +214,24 @@ a:hover{
 .pac-container { z-index: 1051 !important; }
 
 
+/*Tab link*/
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #495057;
+    background-color: #e9ebee;
+    border-color: #6c757d #dee2e6 #e9ebee;
+    border-top: 2px solid #262626!important;
+    border-left: none;
+    border-right: none;
+
+}
+
+a#post-tab, a#fav-tab {
+    color: #262626!important;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
