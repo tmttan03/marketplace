@@ -15,7 +15,8 @@ from .views import (
 	RestockView,
 	AddToFavorites,
 	RemoveFromFavorites,
-	CommunityView
+	CommunityView,
+	DeleteCommentView
 )
 from . import views
 
@@ -25,6 +26,7 @@ urlpatterns = [
     path('create/', PostView.as_view(), name='post-create'),
     path('item/<int:product_id>/', DetailView.as_view(), name='view-post'),
     path('delete/<int:product_id>/', DeleteView.as_view(), name='delete-post'),
+    path('delete-comment/<int:comment_id>/', DeleteCommentView.as_view(), name='delete-comment'),
     path('publish/<int:product_id>/', PublishDraftView.as_view(), name='publish-draft'),
     path('available/<int:product_id>/', MarkAvailableView.as_view(), name='mark-available'),
     path('sold/<int:product_id>/', MarkSoldView.as_view(), name='mark-sold'),

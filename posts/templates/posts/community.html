@@ -76,7 +76,17 @@
                        <a href="{% url 'profile' comment.user.username %}"> <img class="rounded-circle detail-account-img" src="{{ comment.user.profile.image.url }}" style="height: 35px; width:35px;margin-right:0;margin-bottom:0; border: #6c757d solid 0.9px;"></a> &nbsp;&nbsp;
                         <div class="media-body" style="text-align: left">
                            <b><a href="{% url 'profile' comment.user.username %}" style="color: black; ">
-                            <p style="margin-bottom: 0; margin-top: 5px; font-size: 14px">{{ comment.user.first_name }} {{ comment.user.last_name }}</a></b> {{ comment.comment }}  <span style="float: right"><i class="fas fa-ellipsis-h" style="color:#adafb1"></i></span></p>
+                            <p style="margin-bottom: 0; margin-top: 5px; font-size: 14px">{{ comment.user.first_name }} {{ comment.user.last_name }}</a></b> {{ comment.comment }}</p>
+                        </div>
+
+                        <div class="btn-group" style="float: right">
+                          <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-h" style="color:#adafb1;float: right;" ></i></a>
+                          </button>
+                          <div class="dropdown-menu">
+                            <a id="delete-comment-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteCommentModal" href="{% url 'delete-comment' comment.id %}"><span class="fas fa-times"></span> Delete</a>
+
+                            <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href=""><span class="fas fa-pen"></span> Edit</a>
+                          </div>
                         </div>
                      </div>  
                   </div><!-- comments -->
@@ -120,8 +130,16 @@
     </div>
   </div>
 </div>
+
+
 <!--Detail Modal-->
 {% include "posts/includes/post-detail-modal.html" %}
+
+<!--Update Modal-->
+{% include "posts/community/update-comment-template.html" %}
+
+<!--Warning Delete Modal-->
+{% include "posts/community/delete-comment-modal.html" %}
 
 
 {% endblock content %} 

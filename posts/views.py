@@ -360,7 +360,8 @@ class RestockView(LoginRequiredMixin, TemplateView):
             messages.success(self.request, f'Successfully restocked item')
             return redirect('user-products')
         return render(self.request, self.template_name,{'s_form': s_form}) 
-              
+  
+
 class CommunityView(TemplateView):
     """Displays the list of products in the community, where users can also comment on the product."""
     template_name = 'posts/community.html'
@@ -406,7 +407,25 @@ class CommunityView(TemplateView):
         return render(self.request, self.template_name,{'form': form}) 
 
 
+class DeleteCommentView(LoginRequiredMixin, TemplateView):
+    """Delete a Comment."""
+    model = Comment
+    template_name = 'posts/community/warning-del-comment-modal.html'
 
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            comment = get_object_or_404(Comment, id=self.kwargs.get('comment_id'), user=self.request.user)
+            return render(self.request, self.template_name, {'comment': comment})
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        comment = Comment.objects.filter(id=self.kwargs.get('comment_id'), user=self.request.user)
+        if comment.exists():
+            comment.update(status='0')
+            messages.success(self.request, f'Comment Deleted')
+        else:
+            messages.error(self.request, f'Comment Does not Exist')
+        return redirect('community')
         
 
 

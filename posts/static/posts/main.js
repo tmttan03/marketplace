@@ -313,3 +313,44 @@ $('#restock-form').on('hide.bs.modal', function (e) {
 });
 
 
+/*Delete Comment Modal*/
+$("a[id='delete-comment-btn']").click(function() {
+  var link = $(this).attr('href');
+  $('#deleteCommentModal').on('show.bs.modal', function (e) {
+    console.log(link);
+    $.ajax({
+          url: link,
+          method: "GET",
+          success: function(response){
+            console.log(response);
+            $('#deleteCommentModal').attr('data-url', link);
+            $('#comment-del-body').html(response);
+          }
+     })
+  });
+});
+
+
+//var csrftoken = Cookies.get('csrftoken');
+$("a[id='delete-comment-btn']").click(function() {
+    var url = $(this).attr('href');
+  $(document).on('submit', '#comment-del-form', function (e){
+      //var url = $(this).attr("action");
+      console.log(url);
+     // e.preventDefault();
+       $.ajax({
+          url: url,
+          method: "POST",
+          //headers:{"HTTP_X_CSRF_TOKEN":csrftoken},
+          success: function(response){
+              console.log(response)
+              $('#comment-del-body').html(response);
+          }
+     })
+  });
+});
+
+
+$('#comment-del-form').on('hide.bs.modal', function (e) {
+    location.reload();
+});
