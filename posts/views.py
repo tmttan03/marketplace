@@ -23,6 +23,8 @@ class PostListView(TemplateView):
         context['products'] = Product.objects.filter(status='1', is_draft=False).order_by('created_at')
         context['categories'] = Category.objects.all()
         context['productalbum'] = ProductAlbum.objects.all()
+
+        """Transaction Counter"""
         if self.request.user.is_authenticated:
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 
@@ -43,9 +45,8 @@ class UserProductsListView(LoginRequiredMixin, TemplateView):
         context['products'] = Product.objects.filter(seller=user, status='1').order_by('created_at')
         context['sold_products'] = Product.objects.filter(seller=user, status='2').order_by('created_at')
         context['stocks']  = Stock.objects.filter(status='1')
-        #import pdb; pdb.set_trace()
 
-        #if self.request.user.is_authenticated:
+        """Transaction Counter"""
         trans_no = Transaction.objects.filter(buyer=user, status='1')
         if trans_no.exists(): 
             no = Transaction.objects.get(buyer=user, status='1')
@@ -63,18 +64,12 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(BoughtProductsListView, self).get_context_data(**kwargs)
         user = self.request.user
-        #Trans = Transaction.objects.filter(buyer=user, status='0') 
         transaction_ids = Transaction.objects.filter(buyer=user, status='0').values_list('id', flat=True)
         orders = Order.objects.filter(transaction__id__in=transaction_ids)
-        products = [order.product for order in orders]
-        context['products'] = products
+        context['orders'] = orders
 
-        #context['transactions'] = Transaction.objects.filter(buyer=user, status='0')
-        #context['orders'] = Order.objects.filter(status='1').all()
-        
-        #if self.request.user.is_authenticated:
+        """Transaction Counter"""
         trans_no = Transaction.objects.filter(buyer=user, status='1')
-            #if self.kwargs.get('user_id') == self.request.user.id:
         if trans_no.exists(): 
             no = Transaction.objects.get(buyer=self.request.user, status='1')
             context['counter'] = Order.objects.filter(transaction=no,status='1').count()
@@ -82,7 +77,6 @@ class BoughtProductsListView(LoginRequiredMixin, TemplateView):
         else:
             context['counter'] = 0
             return context
-            #raise Http404
  
 
 class PostView(LoginRequiredMixin, TemplateView):
@@ -111,13 +105,11 @@ class PostView(LoginRequiredMixin, TemplateView):
             product.save()
 
             stock = s_form.save(commit=False)
-            #import pdb; pdb.set_trace()
             stock.stock_no = "Stock#" +  str(datetime.datetime.now())
             stock.product = product
             stock.stock_on_hand = s_form.cleaned_data.get('stock_total')
             stock.save()
 
-            #import pdb; pdb.set_trace()
             messages.success(self.request, f'Successfully Added a New Item')
             return redirect('message')        
         return render(self.request, self.template_name,{'form': form, 's_form': s_form})
