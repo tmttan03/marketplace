@@ -1,0 +1,130 @@
+{% extends "posts/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6">
+      {%  for product in products  %}
+         <div class="card">
+            <div class="media" style="padding:10px; padding-bottom: 0">
+               <a href="{% url 'profile' product.seller.username %}"> <img class="rounded-circle detail-account-img" src="{{ product.seller.profile.image.url }}"></a>
+                <div class="media-body" style="text-align: left">
+                   <b><a href="{% url 'profile' product.seller.username %}" style="color: black; "><p style="margin-bottom: 0; margin-top: 5px">{{ product.seller.first_name }} {{ product.seller.last_name }}</p></a>
+                   <a href="{% url 'profile' product.seller.username %}" style="color: black"><small>{{ product.location }} {{ product.created_at | timesince }}</small></a></b>
+                </div>
+             </div>  <!-- seller -->
+
+             <div class="card-content" id="product-details1">
+                  <hr>
+                   <b><p style="padding-bottom: 5px">{{ product.name }} INSTOCK 
+                  <span style="float: right">  
+                  {% if user.is_authenticated %}
+                    {% if user != product.seller %} 
+                      {% for favorite in favorites %} 
+                          {% if favorite.product == product %}
+                              {% if favorite.is_favorite == False %}
+                                <a href="{% url 'favorite' product.id %}"><i class="far fa-star"></i></a>    
+                              {% else %}
+                                <a href="{% url 'unfavorite' product.id %}"><i class="fas fa-star"></i></a> 
+                              {% endif %} 
+                          {% endif %}
+                       {% endfor %} 
+                    {% endif %}
+                  {% endif %} </span>
+                   </p></b>
+                   <b><p style="color:#71a830;font-size: 14px; padding-bottom: 5px">P {{ product.price }} </p></b>
+                   <p style="font-size: 13px;padding-bottom: 5px">{{ product.description }} </p> 
+                  
+              </div><!-- information -->
+
+              <div id="carouselExampleIndicators{{product.name}}" class="carousel slide" data-ride="carousel" data-interval="false" style="padding-bottom: 10px">
+                <ol class="carousel-indicators">
+                {% for photo in product.productalbum_set.all %} 
+                    <li data-target="#carouselExampleIndicators{{product.name}}" data-slide-to="{{ forloop.counter }}" class="{% if forloop.counter == 1 %} active {% endif %}"></li>
+                {% empty %}
+                {% endfor %}
+                  </ol>
+                <div class="carousel-inner">
+                  {% for photo in product.productalbum_set.all %} 
+                    <div class="carousel-item {% if forloop.counter == 1 %} active {% endif %}" id="slide{{ forloop.counter }}">
+                      <img class="d-block w-100" src="{{ photo.image.url }}">
+                    </div>
+                {% empty %}
+                  <div class="carousel-item active">
+                      <img class="d-block w-100" src="http://placehold.it/500" alt="First slide">
+                    </div>
+                  {% endfor %}
+                </div>
+
+                {% for photo in product.productalbum_set.all %} 
+                  <a class="carousel-control-prev" href="#carouselExampleIndicators{{product.name}}" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#carouselExampleIndicators{{product.name}}" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                {% empty %}
+                {% endfor %}
+              </div><!-- carousel -->
+
+              {% for comment in comments %}  
+                {% if comment.product == product %}  
+                  <div class="card" style="padding: 10px">
+                    <div class="media">
+                       <a href="{% url 'profile' comment.user.username %}"> <img class="rounded-circle detail-account-img" src="{{ comment.user.profile.image.url }}" style="height: 35px; width:35px;margin-right:0;margin-bottom:0; border: #6c757d solid 0.9px;"></a> &nbsp;&nbsp;
+                        <div class="media-body" style="text-align: left">
+                           <b><a href="{% url 'profile' comment.user.username %}" style="color: black; ">
+                            <p style="margin-bottom: 0; margin-top: 5px; font-size: 14px">{{ comment.user.first_name }} {{ comment.user.last_name }}</a></b> {{ comment.comment }}  <span style="float: right"><i class="fas fa-ellipsis-h" style="color:#adafb1"></i></span></p>
+                        </div>
+                     </div>  
+                  </div><!-- comments -->
+                 {% endif %}
+              {% endfor %}   
+
+              <div class="card-content" id="comment-content">
+                {% if user.is_authenticated %}
+                    <div class="cart-div">
+                      <form id="" action="{% url 'community' %}" method="POST">
+                        {% csrf_token %}
+                        <fieldset class="form-group" style="margin-bottom: 0px;">
+                            {{ form|crispy }}
+                        </fieldset>
+                        <input type="hidden" id="product_id" name="product_id" value="{{ product.id }}">
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <button id="btn-add-cart" class="btn btn-primary btn-sm btn-block btn-fb" type="submit">Comment</button>
+                        </div>
+                      </form> 
+                    </div>
+                {% else %}
+                    <small class="text-muted">
+                        Want to Comment? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
+                    </small>
+                {% endif %}
+                  
+              </div>
+          </div><br>
+      {% empty %}
+        <center><div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <h1 class="display-4">No Products Yet</h1>
+            <p class="lead">Start by Creating a Product. </p>
+          </div>
+        </div></center>
+      {%  endfor %}
+
+    </div>
+    <div class="col-sm-6">
+     
+    </div>
+  </div>
+</div>
+<!--Detail Modal-->
+{% include "posts/includes/post-detail-modal.html" %}
+
+
+{% endblock content %} 
+
+
+ 

@@ -54,22 +54,22 @@ ul {
 
 
 
-#product-details{
+#product-details, #comment-portion, #product-details1{
   text-align: left;
   padding: 10px!important;
   padding-top: 0!important;
 }
 
-#product-details p{
+#product-details p , #product-details1 p, #comment-portion p{
   margin-bottom: 0!important;
   color:#1d2129;;
 }
 
-#product-details small{
+#product-details small, #product-details1 small, #comment-portion small{
   color:#90949c;
 }
 
-#product-details hr{
+#product-details hr ,#product-details1 hr, #comment-portion hr{
   margin: 0px!important;
   margin-bottom: 10px!important;
 }

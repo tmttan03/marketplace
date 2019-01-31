@@ -14,11 +14,9 @@
     <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
       
         {% for product in sold_products %}
-            {% for stock in stocks %}
-              {% if stock.product == product %}
                   <div class="card" style="padding: 15px">
                     <div class="media">
-                      {% for photo in stock.product.productalbum_set.all %} 
+                      {% for photo in product.productalbum_set.all %} 
                         {% if forloop.counter == 1 %} 
                           <img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/> &nbsp;&nbsp;&nbsp;
                         {% endif %}
@@ -29,31 +27,27 @@
                         <b>
                           <p class="mt-0" style="margin-bottom: 5px; font-size: 14px">
                            <span style="color: #c0392b;">SOLD</span>
-                            - {{ stock.product.name }}  
-                            <small>{{ stock.product.created_at | timesince  }} </small> 
-            
+                            - {{ product.name }}  
+                            <small>{{ product.created_at | timesince  }} </small> 
                           </p>
                         </b>
-
-                        <p style="font-size: 13px"> <b>{{ stock.stock_no }}</b> - {{ stock.product.description }} </p><br>
-                        <a class="btn btn-fb btn-sm" id="mark-available-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#availableModal" href="{% url 'mark-available' stock.product.id %}">Mark as Available</a>
+                        <p style="font-size: 13px">  {{ product.description }} </p><br>
+                        <a class="btn btn-fb btn-sm" id="mark-available-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#availableModal" href="{% url 'mark-available' product.id %}">Mark as Available</a>
 
                         <div class="btn-group dropup">
                           <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Manage
                           </button>
                           <div class="dropdown-menu">
-                            <a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href="{% url 'delete-post' stock.product.id %}"><span class="fas fa-times"></span> Delete</a>
+                            <a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href="{% url 'delete-post' product.id %}"><span class="fas fa-times"></span> Delete</a>
 
-                            <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' stock.product.id %}"><span class="fas fa-pen"></span> Edit</a>
+                            <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' product.id %}"><span class="fas fa-pen"></span> Edit</a>
                           </div>
                         </div>
 
                       </div>
                     </div>
                   </div><br>
-              {% endif %}
-            {% endfor %}
           {% empty %}
         {% endfor %}
     </div>
@@ -61,59 +55,55 @@
 </div>
 {% endif %}
 
-  {% for product in products %}
-      {% for stock in stocks %}
-        {% if stock.product == product %}
-            <div class="card" style="padding: 10px">
-              <div class="media">
-                {% for photo in stock.product.productalbum_set.all %} 
-                  {% if forloop.counter == 1 %} 
-                    <img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/> &nbsp;&nbsp;&nbsp;
+  {% for stock in products_w_stocks %}
+      <div class="card" style="padding: 10px">
+        <div class="media">
+          {% for photo in stock.product.productalbum_set.all %} 
+            {% if forloop.counter == 1 %} 
+              <img class="img-fluid" src="{{ photo.image.url }}" width="130" height="130"/> &nbsp;&nbsp;&nbsp;
+            {% endif %}
+          {% empty %} 
+            <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
+          {% endfor %}   
+          <div class="media-body">
+            <b>
+              <p class="mt-0" style="margin-bottom: 5px; font-size: 14px">
+               {% if stock.stock_on_hand > 0 %}<span style="color: #71a830;">IN STOCK</span>
+               {% else %}<span style="color: #c0392b; ">OUT OF STOCK</span> {% endif %}
+                - {{ stock.product.name }}  
+                <small>{{ stock.product.created_at | timesince  }} </small> 
+                {% if stock.product.is_draft == True %} <span style="color: #c0392b; font-size: 12px">(DRAFT)</span> {% endif %}
+              </p>
+            </b>
+
+            <p style="font-size: 13px"> <b>{{ stock.stock_no }}</b> - {{ stock.product.description }} </p>
+
+              {% if stock.product.is_draft == True %}
+                  <a class="btn btn-fb btn-sm" id="publish-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#publishModal" href="{% url 'publish-draft' stock.product.id %}">Publish Draft</a>
+              {% else %}
+                  {% if stock.stock_on_hand <= 0 %}
+                      <a class="btn btn-fb btn-sm" id="restock-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#restockModal" href="{% url 'restock' stock.product.id %}">Restock Item</a>
+
+                      <a class="btn btn-fb btn-sm" id="mark-sold-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#soldModal" href="{% url 'mark-sold' stock.product.id %}">Mark as Sold</a>
+                  {% else %}
+                      <a href="{% url 'market-product' stock.product.id%}" class="btn btn-fb btn-sm">View Buyers</a> 
                   {% endif %}
-                {% empty %} 
-                  <img class="img-fluid" src="http://placehold.it/120" alt=""/> &nbsp;&nbsp;&nbsp;
-                {% endfor %}   
-                <div class="media-body">
-                  <b>
-                    <p class="mt-0" style="margin-bottom: 5px; font-size: 14px">
-                     {% if stock.stock_on_hand > 0 %}<span style="color: #71a830;">IN STOCK</span>
-                     {% else %}<span style="color: #c0392b; ">OUT OF STOCK</span> {% endif %}
-                      - {{ stock.product.name }}  
-                      <small>{{ stock.product.created_at | timesince  }} </small> 
-                      {% if stock.product.is_draft == True %} <span style="color: #c0392b; font-size: 12px">(DRAFT)</span> {% endif %}
-                    </p>
-                  </b>
+              {% endif %}
+   
 
-                  <p style="font-size: 13px"> <b>{{ stock.stock_no }}</b> - {{ stock.product.description }} </p>
+            <div class="btn-group">
+              <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Manage
+              </button>
+              <div class="dropdown-menu">
+                <a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href="{% url 'delete-post' stock.product.id %}"><span class="fas fa-times"></span> Delete</a>
 
-                    {% if stock.product.is_draft == True %}
-                        <a class="btn btn-fb btn-sm" id="publish-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#publishModal" href="{% url 'publish-draft' stock.product.id %}">Publish Draft</a>
-                    {% else %}
-                        {% if stock.stock_on_hand <= 0 %}
-                            <a class="btn btn-fb btn-sm" id="restock-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#restockModal" href="{% url 'restock' stock.product.id %}">Restock Item</a>
-
-                            <a class="btn btn-fb btn-sm" id="mark-sold-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#soldModal" href="{% url 'mark-sold' stock.product.id %}">Mark as Sold</a>
-                        {% else %}
-                            <a href="{% url 'market-product' product.id%}" class="btn btn-fb btn-sm">View Buyers</a> 
-                        {% endif %}
-                    {% endif %}
-         
-
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Manage
-                    </button>
-                    <div class="dropdown-menu">
-                      <a id="delete-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteModal" href="{% url 'delete-post' stock.product.id %}"><span class="fas fa-times"></span> Delete</a>
-
-                      <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' stock.product.id %}"><span class="fas fa-pen"></span> Edit</a>
-                    </div>
-                  </div>
-                </div>
+                <a id="edit-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_post_modal" href="{% url 'post-update' stock.product.id %}"><span class="fas fa-pen"></span> Edit</a>
               </div>
-            </div><br>
-        {% endif %}
-      {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div><br>
     {% empty %}
       <center><div class="jumbotron jumbotron-fluid">
         <div class="container">

@@ -19,14 +19,14 @@
                   <div class="card-content" id="product-details">
                       <hr>
                        <b><p><span style="color: red">Sold</span> {{ order.product.name }} x {{ order.qty }} </p></b>
-                       <small>{{ order.product.location }} </small>
+                       <small>{{ order.product.location }} {{ order.transaction.start_transaction }}</small>
                   </div><!-- card content -->
                   <hr style="margin-bottom: 10px;margin-top: 5px;">
                   <div class="media" style="padding-left: 10px; padding-right: 10px;">
                      <a href="{% url 'profile' order.product.seller.username %}"> <img class="rounded-circle detail-account-img" src="{{ order.product.seller.profile.image.url }}"></a>
                       <div class="media-body" style="text-align: left">
                          <b><a href="{% url 'profile' order.product.seller.username %}" style="color: black; "><p style="margin-bottom: 0; margin-top: 5px">{{ order.product.seller.username }}</p></a></b>
-                         <a href="{% url 'profile' order.product.seller.username %}" style="color: black"><h6>{{ order.product.seller.first_name }} {{ order.product.seller.last_name }}</h6></a>
+                         <a href="{% url 'profile' order.product.seller.username %}" style="color: black"><small>{{ order.product.seller.first_name }} {{ order.product.seller.last_name }}</small></a>
                       </div>
                   </div>
 

@@ -13,7 +13,6 @@
       </thead>
     <tbody>
 {% for order in orders %}
-  {% if order.product.seller == user %}
     <tr class="rowDataSd">
       <td>{{ order.transaction.no }}</td>
       <td>{{ order.transaction.buyer.first_name }} {{ order.transaction.buyer.last_name }}</td>
@@ -26,8 +25,7 @@
       {% else  %}
         <td>Pending</td>
       {% endif %} 
-
-    {% endif %}   
+    </tr>  
 {% empty %} 
       <tr>
         <td></td>

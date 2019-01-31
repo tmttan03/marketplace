@@ -26,6 +26,8 @@ class CartListView(LoginRequiredMixin, TemplateView):
         if self.request.user.is_authenticated:
             context = super(CartListView, self).get_context_data(**kwargs)
             user = self.request.user
+
+            """Transaction Counter"""
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 
                 no = Transaction.objects.get(buyer=user, status='1')
@@ -110,6 +112,8 @@ class PaymentView(LoginRequiredMixin, TemplateView):
         if self.request.user.is_authenticated:
             context = super(PaymentView, self).get_context_data(**kwargs)
             user = self.request.user
+
+            """Transaction Counter"""
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 
                 no = Transaction.objects.get(buyer=user, status='1')
@@ -164,8 +168,7 @@ class PaymentView(LoginRequiredMixin, TemplateView):
             messages.info(self.request, f"Add items to cart first")
             return redirect('post-home')
 
-
-            
+         
 class MarketListView(LoginRequiredMixin, TemplateView):
     """Displays the summary of the list of buyers of all the user's products"""
     template_name = 'transactions/market.html'
@@ -174,16 +177,19 @@ class MarketListView(LoginRequiredMixin, TemplateView):
         if self.request.user.is_authenticated:
             context = super(MarketListView, self).get_context_data(**kwargs)
             user = self.request.user
-            context['orders'] = Order.objects.filter(status='1')
+            product_ids = Product.objects.filter(seller=user, status='1').order_by('created_at').values_list('id', flat=True)
+            context['orders'] = Order.objects.filter(status='1', product__id__in=product_ids)
+
+            """Transaction Counter"""
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
-           
             if trans_no.exists(): 
                 no = Transaction.objects.get(buyer=user, status='1')
                 context['counter'] = Order.objects.filter(transaction=no,status='1').count()
             else:
                 context['counter'] = 0
             return context            
-           
+ 
+
 class ProductMarketView(LoginRequiredMixin, TemplateView):
     """Displays the list of buyers per product"""
     template_name = 'transactions/product-market.html'
@@ -192,18 +198,21 @@ class ProductMarketView(LoginRequiredMixin, TemplateView):
         if self.request.user.is_authenticated:
             context = super(ProductMarketView, self).get_context_data(**kwargs)
             user = self.request.user
-            product = get_object_or_404(Product, pk=self.kwargs.get('product_id'))
+            product = get_object_or_404(Product, pk=self.kwargs.get('product_id'), seller=user)
+
             if product.seller == user:
                 context['orders'] = Order.objects.filter(status='1', product=self.kwargs.get('product_id'))
+
+                """Stock Counter"""    
+                try:
+                    stock = Stock.objects.get(status='1',product=self.kwargs.get('product_id'))
+                    context['stock'] = stock
+                except Stock.DoesNotExist:
+                    context['stock'] = {'stock_on_hand': 0}
             else:
                 raise Http404
-                
-            try:
-                stock = Stock.objects.get(status='1',product=self.kwargs.get('product_id'))
-                context['stock'] = stock
-            except Stock.DoesNotExist:
-                context['stock'] = {'stock_on_hand': 0}
-            
+
+            """Transaction Counter"""
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 
                 no = Transaction.objects.get(buyer=user, status='1')

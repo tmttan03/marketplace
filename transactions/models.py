@@ -50,7 +50,7 @@ class Payment(models.Model):
 	no = models.CharField(max_length=100)
 	transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 	amount_due = models.DecimalField(max_digits=10, decimal_places=2)
-	purchased_date = models.DateTimeField(auto_now=True)
+	purchased_date = models.DateTimeField(auto_now_add=True)
 	
 
 	def __str__(self):
