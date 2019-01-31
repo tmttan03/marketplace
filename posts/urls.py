@@ -15,11 +15,13 @@ from .views import (
 	RestockView,
 	AddToFavorites,
 	RemoveFromFavorites,
+	CommunityView
 )
 from . import views
 
 urlpatterns = [
     path('', PostListView.as_view(), name='post-home'),
+    path('community', CommunityView.as_view(), name='community'),
     path('create/', PostView.as_view(), name='post-create'),
     path('item/<int:product_id>/', DetailView.as_view(), name='view-post'),
     path('delete/<int:product_id>/', DeleteView.as_view(), name='delete-post'),

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Category, ProductAlbum, Stock
+from .models import Product, Category, ProductAlbum, Stock, Comment
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -40,8 +40,12 @@ class StockForm(forms.ModelForm):
 		model = Stock
 		fields = ['stock_total']
 
-	def clean(self):
-		if self.cleaned_data.get('stock_total') == '':
-			raise ValidationError('Empty code not allowed')
+class CommentForm(forms.ModelForm):
+	comment = forms.CharField(widget=forms.Textarea(attrs={'placeholder':'Write a Comment', 'rows':'2'}), label='')
+
+	class Meta:
+		model = Comment
+		fields = ['comment']
+
 
 		

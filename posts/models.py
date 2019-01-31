@@ -83,3 +83,25 @@ class Favorite(models.Model):
 
 	def __str__(self):
 		return self.favorite_no
+
+
+class Comment(models.Model):
+	INACTIVE = '0'
+	ACTIVE = '1'
+
+	STATUS_CHOICES = (
+		(INACTIVE, "Inactive"),
+		(ACTIVE, "Active"),
+	)
+
+	product = models.ForeignKey(Product, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	comment = models.TextField()
+	status = models.CharField(
+        max_length=2,
+        choices=STATUS_CHOICES,
+        default=ACTIVE,
+    )
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	

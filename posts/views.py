@@ -7,8 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from .forms import PostForm, UpdatePostForm, ImageFieldForm, StockForm
-from .models import Product , Category, ProductAlbum, Stock, Favorite
+from .forms import PostForm, UpdatePostForm, ImageFieldForm, StockForm, CommentForm
+from .models import Product , Category, ProductAlbum, Stock, Favorite, Comment
 
 from transactions.models import Transaction, Payment, Order
 from transactions.forms import ToCartForm
@@ -21,8 +21,6 @@ class PostListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
         context['products'] = Product.objects.filter(status='1', is_draft=False).order_by('created_at')
-        context['categories'] = Category.objects.all()
-        context['productalbum'] = ProductAlbum.objects.all()
 
         """Transaction Counter"""
         if self.request.user.is_authenticated:
@@ -42,9 +40,11 @@ class UserProductsListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(UserProductsListView, self).get_context_data(**kwargs)
         user = self.request.user
-        context['products'] = Product.objects.filter(seller=user, status='1').order_by('created_at')
         context['sold_products'] = Product.objects.filter(seller=user, status='2').order_by('created_at')
-        context['stocks']  = Stock.objects.filter(status='1')
+
+        product_ids = Product.objects.filter(seller=user, status='1').order_by('created_at').values_list('id', flat=True)
+        products_w_stocks = Stock.objects.filter(product__id__in=product_ids, status='1')
+        context['products_w_stocks'] = products_w_stocks
 
         """Transaction Counter"""
         trans_no = Transaction.objects.filter(buyer=user, status='1')
@@ -178,20 +178,21 @@ class DetailView(TemplateView):
             context = super(DetailView, self).get_context_data(**kwargs)
             context['product'] = Product.objects.get(pk=self.kwargs.get('product_id'))
             context['form'] = ToCartForm()
+
+            """Stock Counter"""
             try:
                 stock = Stock.objects.get(status='1',product=self.kwargs.get('product_id'))
                 context['stock'] = stock
             except Stock.DoesNotExist:
                 context['stock'] = {'stock_on_hand': 0}
 
+            """Favorites"""    
             if self.request.user.is_authenticated:
                 try:
                     favorites = Favorite.objects.get(product=self.kwargs.get('product_id'), user=self.request.user)
                     context['is_favorite'] = favorites
                 except Favorite.DoesNotExist:
                     context['is_favorite'] = {'is_favorite': False}
-
-            #import pdb; pdb.set_trace()
             return render(self.request, self.template_name, context)
         raise Http404
 
@@ -227,9 +228,9 @@ class ProfileView(TemplateView):
         on_sale = product.count()
         context['on_sale'] = on_sale
         context['products'] = product
-        context['categories'] = Category.objects.all()
-        context['productalbum'] = ProductAlbum.objects.all()
         context['favorites'] = Favorite.objects.filter(user=user,is_favorite=True)
+
+        """Transaction Counter"""
         if self.request.user.is_authenticated:
             trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
             if trans_no.exists(): 
@@ -360,6 +361,50 @@ class RestockView(LoginRequiredMixin, TemplateView):
             return redirect('user-products')
         return render(self.request, self.template_name,{'s_form': s_form}) 
               
+class CommunityView(TemplateView):
+    """Displays the list of products in the community, where users can also comment on the product."""
+    template_name = 'posts/community.html'
+    form = CommentForm
+
+    def get_context_data(self, **kwargs):
+        context = super(CommunityView, self).get_context_data(**kwargs)
+        context['products'] = Product.objects.filter(status='1', is_draft=False).order_by('created_at')
+        context['comments'] = Comment.objects.filter(status='1')
+        context['form'] = self.form()
+
+        """Stock Counter"""
+        #try:
+            #stock = Stock.objects.get(status='1',product=self.kwargs.get('product_id'))
+            #context['stock'] = stock
+        #except Stock.DoesNotExist:
+            #context['stock'] = {'stock_on_hand': 0}
+
+        """Favorites"""    
+        if self.request.user.is_authenticated:
+            favorites = Favorite.objects.filter(user=self.request.user)
+            context['favorites'] = favorites
+
+        """Transaction Counter"""
+        if self.request.user.is_authenticated:
+            trans_no = Transaction.objects.filter(buyer=self.request.user, status='1')
+            if trans_no.exists(): 
+                no = Transaction.objects.get(buyer=self.request.user, status='1')
+                context['counter'] = Order.objects.filter(transaction=no,status='1').count()
+            else:
+                context['counter'] = 0
+        return context
+
+    def post(self,*args,**kwargs):
+        form = self.form(self.request.POST)
+        if form.is_valid():
+            product_id = self.request.POST['product_id']
+            comment = form.save(commit=False)
+            comment.user = self.request.user
+            comment.product_id = product_id
+            comment.save()
+            return redirect('community')
+        return render(self.request, self.template_name,{'form': form}) 
+
 
 
         
