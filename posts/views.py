@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .forms import PostForm, UpdatePostForm, ImageFieldForm, StockForm, CommentForm
+from .forms import PostForm, UpdatePostForm, ImageFieldForm, StockForm, CommentForm, UpdateCommentForm
 from .models import Product , Category, ProductAlbum, Stock, Favorite, Comment
 
 from transactions.models import Transaction, Payment, Order
@@ -447,4 +447,23 @@ class DeleteCommentView(LoginRequiredMixin, TemplateView):
         return redirect('community')
         
 
+class UpdateCommentView(LoginRequiredMixin, TemplateView):
+    """Update Comment Details."""
+    template_name = 'posts/community/update-comment-modal.html'
+    form = UpdateCommentForm
 
+    def get(self,*args,**kwargs):
+        if self.request.is_ajax():
+            context = super(UpdateCommentView, self).get_context_data(**kwargs)
+            comment_id = self.kwargs.get('comment_id')
+            context['form'] = UpdateCommentForm(instance=Comment.objects.get(pk=comment_id))
+            return render(self.request, self.template_name, context)
+        raise Http404
+
+    def post(self,*args,**kwargs):
+        form = UpdateCommentForm(self.request.POST, instance=Comment.objects.get(pk=self.kwargs.get('comment_id')))
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, f'Comment Updated')
+            return redirect('message')
+        return render(self.request, self.template_name, {'form': form}) 

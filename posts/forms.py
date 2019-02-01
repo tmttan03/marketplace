@@ -47,5 +47,12 @@ class CommentForm(forms.ModelForm):
 		model = Comment
 		fields = ['comment']
 
+		
+class UpdateCommentForm(forms.ModelForm):
+	comment = forms.CharField(widget=forms.Textarea(attrs={'placeholder':'Write a Comment', 'rows':'1'}), label='')
+
+	class Meta:
+		model = Comment
+		fields = ['comment']
 
 		

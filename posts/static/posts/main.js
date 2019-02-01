@@ -354,3 +354,46 @@ $("a[id='delete-comment-btn']").click(function() {
 $('#comment-del-form').on('hide.bs.modal', function (e) {
     location.reload();
 });
+
+
+
+/* Update Comment */
+$("a[id='edit-comment-btn']").click(function() {
+  var link = $(this).attr('href');
+  $('#update_comment_modal').on('show.bs.modal', function (e) {
+    //var link = $("#detail-card").attr('href');
+    $.ajax({
+          url: link,
+          method: "GET",
+          success: function(response){
+            //console.log(response);
+            $('#update_comment_modal').attr('data-url', link);
+            $('#UpdateCommentForm').attr('action', link);
+            $('#update-comment-body').html(response);
+          }
+     })
+  });
+ });
+
+
+$("a[id='edit-comment-btn']").click(function() {
+  var url = $(this).attr('href');
+$(document).on('submit', '#UpdateCommentForm', function (e){
+    //var url = $(this).attr("action");
+    e.preventDefault();
+     $.ajax({
+        url: url,
+        method: "POST",
+        data:  $(this).serialize(),
+        success: function(response){
+            console.log(response)
+            $('#update-comment-body').html(response);
+        }
+   })
+});
+});
+
+
+$('#update_comment_modal').on('hide.bs.modal', function (e) {
+    location.reload();
+});

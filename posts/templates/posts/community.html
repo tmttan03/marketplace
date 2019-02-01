@@ -98,7 +98,7 @@
                         <div class="dropdown-menu">
                           <a id="delete-comment-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#deleteCommentModal" href="{% url 'delete-comment' comment.id %}"><span class="fas fa-times"></span> Delete</a>
 
-                          <a id="edit-comment-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_comment_modal" href="{% url 'delete-comment' comment.id %}"><span class="fas fa-pen"></span> Edit</a>
+                          <a id="edit-comment-btn" class="dropdown-item btn-sm" data-toggle="modal" data-target="#update_comment_modal" href="{% url 'comment-update' comment.id %}"><span class="fas fa-pen"></span> Edit</a>
                         </div>
                         </div>
                     {% endif %}

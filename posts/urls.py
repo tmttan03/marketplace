@@ -16,7 +16,8 @@ from .views import (
 	AddToFavorites,
 	RemoveFromFavorites,
 	CommunityView,
-	DeleteCommentView
+	DeleteCommentView,
+	UpdateCommentView,
 )
 from . import views
 
@@ -33,6 +34,7 @@ urlpatterns = [
     path('restock/<int:product_id>/', RestockView.as_view(), name='restock'),
     path('message/', MessageView.as_view(), name='message'),
     path('update/<int:product_id>/', UpdateView.as_view(), name='post-update'),
+    path('update-comment/<int:comment_id>/', UpdateCommentView.as_view(), name='comment-update'),
     path('selling/', UserProductsListView.as_view(), name='user-products'),
     path('buying/', BoughtProductsListView.as_view(), name='bought-products'),
     path('profile/<str:username>/', ProfileView.as_view(), name='profile'),
