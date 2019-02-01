@@ -6,6 +6,7 @@ from django.views.generic import TemplateView , DetailView, ListView,View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .forms import PostForm, UpdatePostForm, ImageFieldForm, StockForm, CommentForm
 from .models import Product , Category, ProductAlbum, Stock, Favorite, Comment
@@ -393,7 +394,25 @@ class CommunityView(TemplateView):
                 context['counter'] = Order.objects.filter(transaction=no,status='1').count()
             else:
                 context['counter'] = 0
+        
+
+        """Comments Pagination"""
+        product_ids = Product.objects.filter(status='1', is_draft=False).order_by('created_at').values_list('id', flat=True)
+        comments = Comment.objects.filter(product__id__in=product_ids ,status='1')
+
+        page = self.request.GET.get('page', 1)
+        paginator = Paginator(comments, 10)
+        try:
+            numbers = paginator.page(page)
+        except PageNotAnInteger:
+            numbers = paginator.page(1)
+        except EmptyPage:
+            numbers = paginator.page(paginator.num_pages)
+           
+        context['numbers'] = numbers   
+        
         return context
+
 
     def post(self,*args,**kwargs):
         form = self.form(self.request.POST)
