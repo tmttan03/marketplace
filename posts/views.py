@@ -99,12 +99,13 @@ class PostView(LoginRequiredMixin, TemplateView):
     def post(self,*args,**kwargs):
         form = self.form(self.request.POST)
         s_form = self.s_form(self.request.POST)
-        #i_form = self.i_form(self.request.POST,self.request.FILES)
+        #i_form = ImageFieldForm(self.request.POST, self.request.FILES)
+
         if form.is_valid() and s_form.is_valid():
             product = form.save(commit=False)
             product.seller = self.request.user
             product.save()
-
+                
             stock = s_form.save(commit=False)
             stock.stock_no = "Stock#" +  str(datetime.datetime.now())
             stock.product = product
@@ -113,7 +114,7 @@ class PostView(LoginRequiredMixin, TemplateView):
 
             messages.success(self.request, f'Successfully Added a New Item')
             return redirect('message')        
-        return render(self.request, self.template_name,{'form': form, 's_form': s_form})
+        return render(self.request, self.template_name,{'form': form, 's_form': s_form })
 
 
 class MessageView(TemplateView):
@@ -157,6 +158,7 @@ class UpdateView(LoginRequiredMixin, TemplateView):
         if self.request.is_ajax():
             context = super(UpdateView, self).get_context_data(**kwargs)
             context['form'] = UpdatePostForm(instance=Product.objects.get(pk=self.kwargs.get('product_id')))
+            context['products'] = Product.objects.filter(pk=self.kwargs.get('product_id'))
             return render(self.request, self.template_name, context)
         raise Http404
 
@@ -394,23 +396,7 @@ class CommunityView(TemplateView):
                 context['counter'] = Order.objects.filter(transaction=no,status='1').count()
             else:
                 context['counter'] = 0
-        
-
-        """Comments Pagination"""
-        product_ids = Product.objects.filter(status='1', is_draft=False).order_by('created_at').values_list('id', flat=True)
-        comments = Comment.objects.filter(product__id__in=product_ids ,status='1')
-
-        page = self.request.GET.get('page', 1)
-        paginator = Paginator(comments, 10)
-        try:
-            numbers = paginator.page(page)
-        except PageNotAnInteger:
-            numbers = paginator.page(1)
-        except EmptyPage:
-            numbers = paginator.page(paginator.num_pages)
-           
-        context['numbers'] = numbers   
-        
+  
         return context
 
 
@@ -432,10 +418,10 @@ class DeleteCommentView(LoginRequiredMixin, TemplateView):
     template_name = 'posts/community/warning-del-comment-modal.html'
 
     def get(self,*args,**kwargs):
-        if self.request.is_ajax():
-            comment = get_object_or_404(Comment, id=self.kwargs.get('comment_id'), user=self.request.user)
-            return render(self.request, self.template_name, {'comment': comment})
-        raise Http404
+        #if self.request.is_ajax():
+        comment = get_object_or_404(Comment, id=self.kwargs.get('comment_id'), user=self.request.user)
+        return render(self.request, self.template_name, {'comment': comment})
+        #raise Http404
 
     def post(self,*args,**kwargs):
         comment = Comment.objects.filter(id=self.kwargs.get('comment_id'), user=self.request.user)
@@ -445,7 +431,7 @@ class DeleteCommentView(LoginRequiredMixin, TemplateView):
         else:
             messages.error(self.request, f'Comment Does not Exist')
         return redirect('community')
-        
+
 
 class UpdateCommentView(LoginRequiredMixin, TemplateView):
     """Update Comment Details."""

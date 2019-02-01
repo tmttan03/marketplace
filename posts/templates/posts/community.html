@@ -79,10 +79,13 @@
             </div><!-- carousel --><!--Col-sm-6 --><!--Col-sm-6 -->
           </div><!-- Closing Col-sm-6 -->
 
-          <div class="col-sm-6" style="padding-left: 0px"><!--  Col-sm-6 -->
+          <div class="col-sm-6" style="padding-left: 0px;"><!--  Col-sm-6 -->
+
+            <div style="overflow: scroll;overflow-x: hidden;max-height: 675px">
             {% for comment in comments %}  
               {% if comment.product == product %}  
-                <div class="card" style="padding: 10px">
+                <div class="card" style="padding: 10px;">
+
                   <div class="media">
                     <a href="{% url 'profile' comment.user.username %}"> <img class="rounded-circle detail-account-img" src="{{ comment.user.profile.image.url }}" style="height: 35px; width:35px;margin-right:0;margin-bottom:0; border: #6c757d solid 0.9px;"></a> &nbsp;&nbsp;
 
@@ -106,11 +109,13 @@
                 </div><!-- comments -->
               {% endif %}
             {% endfor %}   
+            </div>
 
             <div class="card-content" id="comment-content">
               {% if user.is_authenticated %}
                 <div class="cart-div">
-                  <form id="" action="{% url 'community' %}" method="POST">
+
+                  <form id="comment-form" action="{% url 'community' %}" method="POST" novalidate>
                     {% csrf_token %}
                     <fieldset class="form-group" style="margin-bottom: 0px;">
                         {{ form|crispy }}
@@ -126,42 +131,19 @@
                   Want to Comment? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
                 </small>
               {% endif %}
-
-          
-
-            <div class="infinite-container">
-
-              {% for number in numbers %}
-                  <div class="infinite-item">{{ number }}</div>
-              {% endfor %}
-              </div>
-
-              {% if numbers.has_previous %}
-                <a class="infinite-more-link" href="?page={{ numbers.previous_page_number }}">Back</a>
-              {% endif %}
-
-              {% if numbers.has_next %}
-                <a class="infinite-more-link" href="?page={{ numbers.next_page_number }}">More</a>
-              {% endif %}
-
-              <script>
-                var infinite = new Waypoint.Infinite({
-                  element: $('.infinite-container')[0]
-                });
-              </script>
                     
             </div>
           </div><!-- Closing Col-sm-6 -->
       </div><!--Closing Row -->
     </div><br><!--Closing Card -->
-  {% empty %}
-    <center><div class="jumbotron jumbotron-fluid">
-      <div class="container">
-        <h1 class="display-4">No Products Yet</h1>
-        <p class="lead">Start by Creating a Product. </p>
-      </div>
-    </div></center>
-  {%  endfor %}<!--End for -->
+{% empty %}
+  <center><div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-4">No Products Yet</h1>
+      <p class="lead">Start by Creating a Product. </p>
+    </div>
+  </div></center>
+{%  endfor %}<!--End for -->
 </div>
 
 

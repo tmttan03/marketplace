@@ -317,7 +317,8 @@ $('#restock-form').on('hide.bs.modal', function (e) {
 $("a[id='delete-comment-btn']").click(function() {
   var link = $(this).attr('href');
   $('#deleteCommentModal').on('show.bs.modal', function (e) {
-    console.log(link);
+    //var link = $("#detail-card").attr('href');
+    //console.log(link);
     $.ajax({
           url: link,
           method: "GET",
@@ -354,7 +355,6 @@ $("a[id='delete-comment-btn']").click(function() {
 $('#comment-del-form').on('hide.bs.modal', function (e) {
     location.reload();
 });
-
 
 
 /* Update Comment */
@@ -397,3 +397,5 @@ $(document).on('submit', '#UpdateCommentForm', function (e){
 $('#update_comment_modal').on('hide.bs.modal', function (e) {
     location.reload();
 });
+
+

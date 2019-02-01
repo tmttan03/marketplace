@@ -1,9 +1,12 @@
 {% load crispy_forms_tags %}
 <div class="card">
-  <form id="post-create-form" method="POST" action="{% url 'post-create' %}" novalidate enctype="multipart/form-data">
+  <form id="post-create-form" method="POST" action="{% url 'post-create' %}" enctype="multipart/form-data" novalidate >
     {% csrf_token %}
     <fieldset class="form-group">
         {{ form|crispy }}
+    </fieldset>
+    <fieldset class="form-group" style="margin-bottom: 0">
+        {{ i_form|crispy }}
     </fieldset>
     <fieldset class="form-group" style="margin-bottom: 0">
         {{ s_form|crispy }}
